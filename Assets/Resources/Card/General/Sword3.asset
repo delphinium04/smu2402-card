@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 577962c531635ca4b95c2ce43914519b, type: 3}
+  m_Name: Sword3
+  m_EditorClassIdentifier: 
+  cardName: "\uCE7C"
+  image: {fileID: 0}
+  description: "\uC801\uC5D0\uAC8C 15 \uB370\uBBF8\uC9C0\uB97C \uC785\uD788\uBA70
+    \uC801\uC774 1\uBA85\uB9CC \uC788\uC744 \uACBD\uC6B0 \uC785\uD788\uB294 \uB370\uBBF8\uC9C0\uAC00
+    1.5\uBC30 \uC99D\uAC00\uD569\uB2C8\uB2E4.\r"
+  type: 0
+  cardLevel: 2
+  targetingType: 1
+  maxTargetCount: 1
