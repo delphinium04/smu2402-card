@@ -1,42 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EmemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
-    // Start is called before the first frame update
     private int hp = 12;
-    private int damage = 6;
-    void Start()
-    {
 
+    public void AttackPlayer()
+    {
+        int damage = 10;  // 정해진 공격력
+        Debug.Log("적이 플레이어를 공격합니다. 데미지: " + damage);
+        FindObjectOfType<PlayerController>().TakeDamage(damage);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     public void TakeDamage(int damage)
     {
         hp -= damage;
+        Debug.Log("적이 " + damage + "의 피해를 입었습니다. 남은 체력: " + hp);
         if (hp <= 0)
         {
-            hp = 0;
             OnDie();
         }
     }
-    public void OnDie()
+
+    private void OnDie()
     {
         Debug.Log("적이 사망했습니다.");
-    }
-    public int GetHp()
-    {
-        return hp;
-    }
-
-    public int GetDamage()
-    {
-        return damage;
     }
 }
