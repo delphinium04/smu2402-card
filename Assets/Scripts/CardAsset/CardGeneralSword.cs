@@ -1,9 +1,10 @@
+using Card;
 using UnityEngine;
 
 namespace CardAsset
 {
     [CreateAssetMenu(fileName = "Sword", menuName = "Card/General/Sword")]
-    public class CardGeneralSword : Card
+    public class CardGeneralSword : BaseCard
     {
         private const int Damage = 5;
 

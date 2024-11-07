@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Card;
+using UnityEngine;
 
 namespace CardAsset
 {
     [CreateAssetMenu(fileName = "DebuffNaming", menuName = "Card/Skill/DebuffNaming")]
-    public class CardSkillDebuffNaming : Card
+    public class CardSkillDebuffNaming : BaseCard
     {
         public override void Use(params GameObject[] targets)
         {

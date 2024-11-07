@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Card;
+using UnityEngine;
 
 namespace CardAsset
 {
     [CreateAssetMenu(fileName = "Orange", menuName = "Card/Skill/Orange")]
-    public class CardSkillOrange : Card
+    public class CardSkillOrange : BaseCard
     {
         public override void Use(params GameObject[] targets)
         {

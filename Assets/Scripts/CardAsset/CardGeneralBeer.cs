@@ -1,9 +1,10 @@
+using Card;
 using UnityEngine;
 
 namespace CardAsset
 {
     [CreateAssetMenu(fileName = "Beer", menuName = "Card/General/Beer")]
-    public class CardGeneralBeer : Card
+    public class CardGeneralBeer : BaseCard
     {
         private const int Heal = 4;
 
