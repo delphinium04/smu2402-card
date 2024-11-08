@@ -11,7 +11,7 @@ namespace Card
         private GameObject _cardPrefab;
 
         private CardDeck _cardDeck = new CardDeck();
-    
+
         /// <summary>
         /// 덱에 있는 카드 데이터를 랜덤으로 사용해서 카드 오브젝트의 배열로 반환합니다.
         /// 만약 덱의 카드 개수가 부족할 경우 가능한 만큼만 반환합니다.
@@ -27,11 +27,12 @@ namespace Card
                 if (amount == 0) return null;
             }
 
-            CardBehaviour[] cards = CreateCardInstances(amount);
+            CardBehaviour[] cards = new CardBehaviour[amount];
 
             for (int i = 0; i < amount; i++)
             {
                 var cardData = _cardDeck.GetRandomCard();
+                cards[i] = CreateCardInstance(cardData);
                 cards[i]?.Init(cardData);
             }
 
@@ -39,25 +40,13 @@ namespace Card
         }
 
         /// <summary>
-        /// 덱 내의 모든 카드를 카드 오브젝트로 생성해서 반환합니다.
-        /// </summary>
-        public CardBehaviour[] GetAllCardInDeck()
-        {
-            var cardData = _cardDeck.GetAllCard();
-            var arr = CreateCardInstances(cardData.Count());
-            for (int i = 0; i < cardData.Count; i++)
-            {
-                arr[i].Init(cardData[i]);
-            }
-
-            return arr;
-        }
-
-        /// <summary>
         /// 덱 내의 모든 카드의 "데이터"를 반환합니다.
         /// </summary>
         public IReadOnlyList<BaseCard> GetAllCardDataInDeck()
             => _cardDeck.GetAllCard();
+
+        public CardBehaviour GetCardBehaviour(BaseCard c)
+            => CreateCardInstance(c);
 
         public void AddCardToDeck(params CardBehaviour[] cards)
         {
@@ -80,26 +69,13 @@ namespace Card
             return true;
         }
 
-        /// <summary>
-        /// 지정된 수만큼 카드 오브젝트 인스턴스를 생성합니다.
-        /// </summary>
-        /// <param name="amount">생성할 수</param>
-        /// <returns>생성된 카드 게임 오브젝트 배열</returns>
-        private CardBehaviour[] CreateCardInstances(int amount)
+        private CardBehaviour CreateCardInstance(BaseCard c)
         {
             if (_cardPrefab == null)
             {
                 Debug.LogError("카드 프리팹이 설정되지 않았습니다.");
-                return new CardBehaviour[amount];
             }
-
-            CardBehaviour[] cards = new CardBehaviour[amount];
-            for (int i = 0; i < amount; i++)
-            {
-                cards[i] = Instantiate(_cardPrefab, transform).GetComponent<CardBehaviour>();
-            }
-
-            return cards;
+            return Instantiate(_cardPrefab, transform).GetComponent<CardBehaviour>();
         }
 
         private class CardDeck
