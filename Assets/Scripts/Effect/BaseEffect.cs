@@ -21,12 +21,12 @@ namespace Effect
     public abstract class BaseEffect: ScriptableObject
     {
         [SerializeField]
-        protected string name;
-        public string Name => name;
+        protected string effectName;
+        public string EffectName => effectName;
 
         [SerializeField]
-        protected Sprite icon;
-        public Sprite Icon => icon;
+        protected Sprite effectIcon;
+        public Sprite EffectIcon => effectIcon;
 
         [SerializeField]
         protected string description;
@@ -36,14 +36,9 @@ namespace Effect
         protected Type Type;
         protected int TurnDuration;
 
-        protected BaseEffect(GameObject target, int duration, Type type)
-        {
-            Target = target;
-            TurnDuration = duration;
-            Type = type;
-        }
-
-        public abstract void Apply();
+        // Use to apply effect
+        public abstract void Init(GameObject target, int duration);
+        protected abstract void Apply();
         public abstract void Remove();
         public abstract void IncreaseTurn();
     }

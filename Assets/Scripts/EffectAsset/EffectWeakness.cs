@@ -1,18 +1,22 @@
 ﻿using Effect;
-using UnityEngine;
+using UnityEngine;  
 
 namespace EffectAsset
 {
     [CreateAssetMenu(fileName = "EffectWeakness", menuName = "Effect/Weakness", order = 1)]
     public class EffectWeakness : BaseEffect
     {
-        public EffectWeakness(GameObject target, int duration) : base(target, duration, Type.Weakness)
+        public override void Init(GameObject target, int duration)
         {
+            Target = target;
+            TurnDuration = duration;
             Apply();
         }
 
-        public sealed override void Apply()
+        protected sealed override void Apply()
         {
+            Debug.Log("ASDf");
+            return;
             Debug.Log($"{Target.name} {Type.Weakness.ToString()} 적용: 받는 데미지 증가");
             // target.defencedMultiple += _amount;
             // target.EffectManager.AddEffect(this);
