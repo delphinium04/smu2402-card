@@ -1,12 +1,13 @@
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class BaseEnemy : MonoBehaviour
 {
-    private int hp = 12;
+    protected int hp;
+    protected int damage;
+    protected int weight;
 
-    public void AttackPlayer()
+    public virtual void AttackPlayer()
     {
-        int damage = 10;  // 정해진 공격력
         Debug.Log("적이 플레이어를 공격합니다. 데미지: " + damage);
         FindObjectOfType<PlayerController>().TakeDamage(damage);
     }
@@ -21,7 +22,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnDie()
+    protected virtual void OnDie()
     {
         Debug.Log("적이 사망했습니다.");
     }
