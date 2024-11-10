@@ -258,6 +258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 860cda8ee761e274694dd7fee5f759b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testCard: {fileID: 11400000, guid: 12961d0a93af0ac4cb080b3b4bc86eab, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

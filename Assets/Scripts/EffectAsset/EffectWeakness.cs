@@ -25,8 +25,6 @@ namespace EffectAsset
 
         protected override void Apply()
         {
-            Debug.Log("ASDf");
-            return;
             Debug.Log($"{Target.name} {Type.Weakness.ToString()} 적용: 받는 데미지 증가");
             // target.defencedMultiple += _amount;
         }
@@ -56,11 +54,16 @@ namespace EffectAsset
             }
         }
 
-        public override void Ignore(int turn)
+        public override void IgnoreTurn(int turn)
         {
             TurnIgnored = turn;
             Remove();
             Debug.Log($"{effectName} deactivated");
+        }
+
+        public override void AddTurn(int turn)
+        {
+            TurnDuration += turn;
         }
     }
 }

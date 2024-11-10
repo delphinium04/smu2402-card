@@ -2,33 +2,16 @@
 
 namespace Card
 {
-    public enum CardType
-    {
-        Normal,
-        Skill,
-        Special
-    }
-
-    public enum CardLevel
-    {
-        One,
-        Two,
-        Three
-    }
-
-    public enum TargetingType
-    {
-        None,
-        Single,
-        Multiple,
-        All
-    }
     /// <summary>
     /// 카드의 추상 클래스로 데이터의 모음입니다.
     /// 카드의 실체를 참조할 땐 웬만하면 CardBehaviour를 참조해주세요.
     /// </summary>
     public abstract class BaseCard : ScriptableObject
     {
+        [SerializeField]
+        private CardAssetType cardAssetType;
+        public CardAssetType CardAssetType => cardAssetType;
+
         [SerializeField]
         private string cardName;
         public string CardName => cardName;

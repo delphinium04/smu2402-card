@@ -45,9 +45,10 @@ namespace Effect
             }
         }
 
-        public void AddEffect(BaseEffect effect)
+        public void AddEffect(BaseEffect effect, int turn)
         {
             _effects.Add(effect);
+            effect.Init(gameObject, turn);
         }
         
         public void RemoveEffect(BaseEffect effect)
@@ -57,7 +58,7 @@ namespace Effect
                 _effects.Remove(effect);
                 effect.Remove();
             }
-            else Debug.LogError("EffectManager: failed to remove effect (no effect)");
+            else Debug.LogError("EffectManager: no effect in list");
         }
         
         private void OnTurnPassed()
@@ -67,20 +68,20 @@ namespace Effect
         {
             if (target != null && _effects.Contains(target))
             {
-                target.Ignore(turns);
+                target.IgnoreTurn(turns);
                 return;
             }
             
             switch (kind)
             {
                   case Kind.Debuff:
-                      _effects.ForEach(e => { if(IsBuff(e)) e.Ignore(turns);});
+                      _effects.ForEach(e => { if(IsBuff(e)) e.IgnoreTurn(turns);});
                       break;
                   case Kind.Buff:
-                      _effects.ForEach(e => { if(!IsBuff(e)) e.Ignore(turns);});
+                      _effects.ForEach(e => { if(!IsBuff(e)) e.IgnoreTurn(turns);});
                       break;
                   case Kind.All:
-                      _effects.ForEach(e => { e.Ignore(turns);});
+                      _effects.ForEach(e => { e.IgnoreTurn(turns);});
                       break;
                   default:
                       throw new ArgumentOutOfRangeException(nameof(kind), kind, null);

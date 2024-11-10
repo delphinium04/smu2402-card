@@ -50,6 +50,7 @@ namespace Effect
         public abstract void Remove();
         public abstract void OnTurnPassed();
         // Remove effect temporarily during N turns
-        public abstract void Ignore(int turn);
+        public abstract void IgnoreTurn(int turn);
+        public abstract void AddTurn(int turn);
     }
 }
