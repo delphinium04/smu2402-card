@@ -1,21 +1,31 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Card
 {
     public class CardManager : MonoBehaviour
     {
-        [SerializeField]
         private GameObject _cardPrefab;
+        private readonly CardDeck _cardDeck = new CardDeck();
 
-        private CardDeck _cardDeck = new CardDeck();
+        private void Awake()
+        {
+            if (_cardPrefab == null) _cardPrefab = Resources.Load<GameObject>("Card/CardPrefab");
+        }
+
+        public BaseCard testCard;
+        private void Start()
+        {
+            var a = GetCardBehaviour(testCard);
+            
+        }
 
         /// <summary>
-        /// 덱에 있는 카드 데이터를 랜덤으로 사용해서 카드 오브젝트의 배열로 반환합니다.
-        /// 만약 덱의 카드 개수가 부족할 경우 가능한 만큼만 반환합니다.
-        /// Draw된 카드는 덱에서 삭제됩니다.
+        /// 가능한 amount만큼 카드 오브젝트를 만들어 반환합니다.
         /// </summary>
         public CardBehaviour[] DrawCard(int amount)
         {
@@ -45,8 +55,12 @@ namespace Card
         public IReadOnlyList<BaseCard> GetAllCardDataInDeck()
             => _cardDeck.GetAllCard();
 
-        public CardBehaviour GetCardBehaviour(BaseCard c)
-            => CreateCardInstance(c);
+        /// <summary>
+        /// 카드 데이터를 통해 만든 오브젝트(CardBehaviour Component)를 반환합니다.
+        /// <param name="cardData">카드 데이터 (CardGeneralGun ...)</param>
+        /// </summary>
+        public CardBehaviour GetCardBehaviour(BaseCard cardData)
+            => CreateCardInstance(cardData);
 
         public void AddCardToDeck(params CardBehaviour[] cards)
         {
@@ -60,35 +74,41 @@ namespace Card
         /// <summary>
         /// General 카드가 강화 가능한 경우 true를 반환합니다.
         /// </summary>
-        /// <param name="upgradedCards">업그레이드 되었을 시 선택된 카드 목록</param>
-        /// <param name="selectedCards">현재 플레이어가 선택한 카드들</param>
+        /// <param name="upgradedCards">반환받을 업그레이드 카드 목록</param>
+        /// <param name="selectedCards">선택된 카드</param>
         public bool CanUpgrade(out List<CardBehaviour> upgradedCards, params CardBehaviour[] selectedCards)
         {
             // pass
-            upgradedCards = new List<CardBehaviour>();
-            return true;
+            upgradedCards = selectedCards.ToList().Where(c => c.Card.CardType == CardType.Normal).ToList();
+            if (upgradedCards.Count < 2) return false;
+            else return true; // else -> Sort + classify by Card
         }
 
         private CardBehaviour CreateCardInstance(BaseCard c)
         {
             if (_cardPrefab == null)
             {
-                Debug.LogError("카드 프리팹이 설정되지 않았습니다.");
+                Debug.LogError("CardManager: No CardPrefab!");
             }
-            return Instantiate(_cardPrefab, transform).GetComponent<CardBehaviour>();
+
+            var cardObject = Instantiate(_cardPrefab, transform).GetComponent<CardBehaviour>();
+            cardObject.Init(c);
+            return cardObject;
         }
 
         private class CardDeck
         {
-            private List<BaseCard> _cards = new List<BaseCard>();
+            private readonly List<BaseCard> _cards = new List<BaseCard>();
 
             public int GetRemainCardCount() => _cards.Count;
 
+            public bool IsEmpty() => _cards.Count == 0;
+            
             public BaseCard GetRandomCard()
             {
                 if (_cards.Count == 0)
                 {
-                    Debug.LogError("No card in deck, but GetRandomCard is Called.");
+                    Debug.LogError("CardDeck: No card to return");
                     return null;
                 }
 

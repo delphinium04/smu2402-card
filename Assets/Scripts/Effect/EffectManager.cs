@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Unity.VisualScripting;
 
 namespace Effect
 {
-    public class EffectManager
+    /// <summary>
+    /// 각 엔티티가 가지고 있어야 하는 컴포넌트입니다
+    /// 스킬 카드가 {Entity}.{EffectManagerInstance}.Add(Effect)~ 이런 식으로 접근하며
+    /// 각 효과의 턴 당 행동을 위해 게임의 턴 증가 이벤트에 등록해야 합니다
+    /// </summary>
+    public class EffectManager: MonoBehaviour
     {
+        private const int DebuffStartIndexInType = 3; // from BaseEffect.Type
         private readonly List<BaseEffect> _effects;
 
         public enum Kind
@@ -25,21 +34,21 @@ namespace Effect
         {
             switch (kind)
             {
-                case Kind.Debuff:
-                    break;
-                case Kind.Buff:
-                    break;
                 case Kind.All:
-                    break;
+                    return _effects;
+                case Kind.Debuff:
+                    return _effects.Where(e => !IsBuff(e)).ToList();
+                case Kind.Buff:
+                    return _effects.Where(e => !IsBuff(e)).ToList();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(kind), kind, null);
             }
-            return _effects.AsReadOnly();
         }
 
-        public void AddEffect(BaseEffect effect)
+        public void AddEffect(BaseEffect effect, int turn)
         {
             _effects.Add(effect);
+            effect.Init(gameObject, turn);
         }
         
         public void RemoveEffect(BaseEffect effect)
@@ -49,13 +58,37 @@ namespace Effect
                 _effects.Remove(effect);
                 effect.Remove();
             }
-            else Debug.LogError("EffectManager: failed to remove effect (no effect)");
+            else Debug.LogError("EffectManager: no effect in list");
         }
         
-        public void OnTurnIncreased()
+        private void OnTurnPassed()
+            => _effects.ForEach(e => e.OnTurnPassed());
+
+        public void IgnoreEffect(Kind kind, int turns, BaseEffect target = null)
         {
-            foreach(var e in _effects)
-                e.IncreaseTurn();
+            if (target != null && _effects.Contains(target))
+            {
+                target.IgnoreTurn(turns);
+                return;
+            }
+            
+            switch (kind)
+            {
+                  case Kind.Debuff:
+                      _effects.ForEach(e => { if(IsBuff(e)) e.IgnoreTurn(turns);});
+                      break;
+                  case Kind.Buff:
+                      _effects.ForEach(e => { if(!IsBuff(e)) e.IgnoreTurn(turns);});
+                      break;
+                  case Kind.All:
+                      _effects.ForEach(e => { e.IgnoreTurn(turns);});
+                      break;
+                  default:
+                      throw new ArgumentOutOfRangeException(nameof(kind), kind, null);
+            }
         }
+
+        private static bool IsBuff(BaseEffect e)
+            => (int)e.Type >= DebuffStartIndexInType;
     }
 }

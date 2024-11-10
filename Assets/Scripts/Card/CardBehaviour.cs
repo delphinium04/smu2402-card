@@ -1,9 +1,20 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using Unity.VisualScripting;
 
 namespace Card
 {
     public class CardBehaviour : MonoBehaviour
     {
+        [SerializeField]
+        private SpriteRenderer cardImage;
+        [SerializeField]
+        private TMP_Text cardDescription;
+        [SerializeField]
+        private TMP_Text cardName;
+        
         public BaseCard Card { get; private set; }
 
         private void Awake()
@@ -17,7 +28,10 @@ namespace Card
             if (Card != null) return;
             Card = c;
             name = Card.CardName;
-            // Set texts and Image
+
+            cardImage.sprite = Card.Image;
+            cardDescription.text = Card.Description;
+            cardName.text = Card.CardName;
         }
 
         // 카드 사용 시 호출
