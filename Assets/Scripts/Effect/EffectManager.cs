@@ -8,11 +8,11 @@ using Unity.VisualScripting;
 namespace Effect
 {
     /// <summary>
-    /// 각 엔티티가 가지고 있어야 하는 클래스입니다.
+    /// 각 엔티티가 가지고 있어야 하는 컴포넌트입니다
     /// 스킬 카드가 {Entity}.{EffectManagerInstance}.Add(Effect)~ 이런 식으로 접근하며
-    /// 각 효과의 턴 당 행동을 위해 게임의 턴 증가 이벤트에 등록해야 합니다.
+    /// 각 효과의 턴 당 행동을 위해 게임의 턴 증가 이벤트에 등록해야 합니다
     /// </summary>
-    public class EffectManager
+    public class EffectManager: MonoBehaviour
     {
         private const int DebuffStartIndexInType = 3; // from BaseEffect.Type
         private readonly List<BaseEffect> _effects;

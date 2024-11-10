@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d6b4d44fca402092cfc981480d0822, type: 3}
   m_Name: EffectWeakness
   m_EditorClassIdentifier: 
-  effectName: 
+  type: 0
+  effectName: "\uC1E0\uC57D"
   effectIcon: {fileID: 0}
-  description: 
+  description: "\uC785\uD788\uB294 \uD53C\uD574\uB7C9\uC774 25% \uAC10\uC18C\uD569\uB2C8\uB2E4"
