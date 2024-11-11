@@ -10,6 +10,7 @@ namespace Item
         public BaseItem testItem;
         private readonly List<BaseItem> _items = new List<BaseItem>();
 
+        // Called from BaseItem.Init();
         public void AddItem(BaseItem item)
         {
             // if already has ALL Item then change item to fruit
