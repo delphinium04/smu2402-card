@@ -41,8 +41,23 @@ namespace Effect
         protected int TurnDuration;
         protected int TurnIgnored; // disable effect temporarily
 
-        // Assign variable's value and Apply effect
-        public abstract void Init(GameObject target, int duration);
+        // Assign variable and Apply effect
+        public void Init(GameObject target, int duration)
+        {
+            if (Target != null)
+            {
+                Debug.LogError($"{GetType().Name}.Init: Target already set!");
+                return;
+            }
+
+            Target = target;
+            TurnDuration = duration;
+            TurnIgnored = 0;
+
+            Apply();
+            // Target.EffectManager.AddEffect(this);
+        }
+        
         protected abstract void Apply();
 
         // Remove effect from entity
