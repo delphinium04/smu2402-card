@@ -7,23 +7,6 @@ namespace EffectAsset
     [CreateAssetMenu(fileName = "EffectWeakness", menuName = "Effect/Weakness", order = 1)]
     public class EffectWeakness : BaseEffect
     {
-        // Called only once
-        public override void Init(GameObject target, int duration)
-        {
-            if (Target != null)
-            {
-                Debug.LogError("EffectWeakness Init: Target already set!");
-                return;
-            }
-
-            Target = target;
-            TurnDuration = duration;
-            TurnIgnored = 0;
-
-            Apply();
-            // target.EffectManager.AddEffect(this);
-        }
-
         protected override void Apply()
         {
             //Debug.Log($"{Target.name} {effectType.ToString()} 적용: 받는 데미지 증가");
