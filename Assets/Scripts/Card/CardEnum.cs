@@ -16,7 +16,7 @@
 
     public enum TargetingType
     {
-        None,
+        None, // 타겟이 필요 없는 경우
         Single,
         Multiple,
         All

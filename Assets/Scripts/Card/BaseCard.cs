@@ -9,10 +9,6 @@ namespace Card
     public abstract class BaseCard : ScriptableObject
     {
         [SerializeField]
-        private CardAssetType cardAssetType;
-        public CardAssetType CardAssetType => cardAssetType;
-
-        [SerializeField]
         private string cardName;
         public string CardName => cardName;
 
@@ -28,11 +24,7 @@ namespace Card
         [SerializeField]
         private CardType cardType;
         public CardType CardType => cardType;
-
-        [SerializeField]
-        private CardLevel cardLevel;
-        public CardLevel CardLevel => cardLevel;
-
+       
         [SerializeField]
         private TargetingType targetingType;
         public TargetingType TargetingType => targetingType;
@@ -44,5 +36,13 @@ namespace Card
 
         /// <returns>True when used</returns>
         public abstract void Use(params GameObject[] targets);
+
+        protected static bool GetComponent<T>(GameObject gameObject, out T component)
+        {
+            if (!gameObject.TryGetComponent(out component))
+                return true;
+            Debug.LogError($"GameObject {gameObject.name} does not have {component.GetType().Name}");
+            return false;
+        }
     }
 }

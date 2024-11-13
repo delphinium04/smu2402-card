@@ -5,7 +5,7 @@ namespace Effect
 {
     /// <summary>
     /// 적용된 엔티티 관점 기준 버프 -> 디버프순
-    /// [철갑, 분노, 면역, | 약화, 취약, 침묵, 속박]
+    /// [철갑, 분노, 면역, | 약화, 취약, 침묵, 속박, 공포]
     /// </summary>
     public enum Type
     {
@@ -15,7 +15,8 @@ namespace Effect
         Weakness,
         Fatigue,
         Silence,
-        Root
+        Root,
+        Fear
     }
 
 
@@ -55,16 +56,42 @@ namespace Effect
             TurnIgnored = 0;
 
             Apply();
-            // Target.EffectManager.AddEffect(this);
         }
         
         protected abstract void Apply();
 
         // Remove effect from entity
         public abstract void Remove();
-        public abstract void OnTurnPassed();
+        
+        // Called from EffectManager
+        public void OnTurnPassed()
+        {
+            TurnDuration--;
+            if (TurnIgnored > 0)
+            {
+                TurnIgnored--;
+                if (TurnIgnored == 0)
+                {
+                    Debug.Log($"{EffectName} reactivated");
+                    Apply();
+                }
+            }
+            
+            if (TurnDuration == 0)
+                Target.GetComponent<EffectManager>()?.RemoveEffect(this);
+        }
+        
         // Remove effect temporarily during N turns
-        public abstract void IgnoreTurn(int turn);
-        public abstract void AddTurn(int turn);
+        public void AddIgnoreTurn(int turn)
+        {
+            TurnIgnored += turn;
+            Remove();
+            Debug.Log($"{EffectName} deactivated");
+        }
+        
+        public void AddTurn(int turn)
+        {
+            TurnDuration += turn;
+        }
     }
 }

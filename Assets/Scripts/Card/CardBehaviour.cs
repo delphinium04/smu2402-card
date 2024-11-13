@@ -34,10 +34,15 @@ namespace Card
             cardName.text = Card.CardName;
         }
 
-        // 카드 사용 시 호출
+        
+        /// <summary>
+        /// 카드 사용 시 호출
+        /// </summary>
+        /// <param name="targets">카드의 사용 대상 (또는 전체)</param>
         public void Use(params GameObject[] targets)
         {
-            if (Card.TargetingType != TargetingType.None && targets.Length == 0)
+            // 타겟이 필요하나 targets에 아무것도 없는 경우
+            if (targets.Length == 0 && Card.TargetingType != TargetingType.None)
             {
                 Debug.LogError($"{Card.CardName} Need targets to use Card");
                 return;

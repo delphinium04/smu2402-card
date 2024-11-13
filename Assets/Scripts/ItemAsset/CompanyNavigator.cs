@@ -4,13 +4,12 @@ using UnityEngine;
 namespace ItemAsset
 {
     // 동료 항해사
-    [CreateAssetMenu(fileName = "CompanyNavigator", menuName = "Item/Company/Navigator")]
-    public class CompanyNavigator:BaseItem
+    [CreateAssetMenu(fileName = "Navigator", menuName = "Item/Company/Navigator")]
+    public class CompanyNavigator : BaseItem
     {
         protected override void Enable()
         {
-            // TargetController?.IgnoreEnvironmentTurns += 3;
-            return;
+            // Player.IgnoreEnvironmentTurns += 3;
         }
 
         public override void Disable()

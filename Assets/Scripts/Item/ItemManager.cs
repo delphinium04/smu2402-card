@@ -14,6 +14,11 @@ namespace Item
         public void AddItem(BaseItem item)
         {
             // if already has ALL Item then change item to fruit
+            if (_items.Contains(item))
+            {
+                Debug.Log($"Player has {item.ItemName}, change to defaultItem ");
+                return;
+            }
             _items.Add(item);
         }
 

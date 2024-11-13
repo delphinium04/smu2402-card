@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b330fc76e9b348ff808bb201b234e17d, type: 3}
+  m_Name: Seasickness
+  m_EditorClassIdentifier: 
+  cardName: "\uBC43\uBA40\uBBF8"
+  image: {fileID: 0}
+  description: "1\uD134 \uB3D9\uC548(\uAC15\uD654 \uC2DC 2\uD134) \uC0C1\uB300\uBC29
+    1\uBA85\uC774 \uC57D\uD654\uC5D0 \uAC78\uB9BD\uB2C8\uB2E4"
+  cardType: 1
+  targetingType: 0
+  maxTargetCount: 0
+  effect: {fileID: 11400000, guid: 62e9a0584c7cb74479213904f2fd4c3b, type: 2}
+  isUpgraded: 0

@@ -17,13 +17,6 @@ namespace Card
             if (_cardPrefab == null) _cardPrefab = Resources.Load<GameObject>("Card/CardPrefab");
         }
 
-        public BaseCard testCard;
-        private void Start()
-        {
-            var a = GetCardBehaviour(testCard);
-            
-        }
-
         /// <summary>
         /// 가능한 amount만큼 카드 오브젝트를 만들어 반환합니다.
         /// </summary>

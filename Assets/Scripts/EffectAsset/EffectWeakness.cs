@@ -4,50 +4,34 @@ using UnityEngine;
 
 namespace EffectAsset
 {
-    [CreateAssetMenu(fileName = "EffectWeakness", menuName = "Effect/Weakness", order = 1)]
+    [CreateAssetMenu(fileName = "Weakness", menuName = "Effect/Weakness", order = 1)]
+    // 상태이상 약화
     public class EffectWeakness : BaseEffect
     {
         protected override void Apply()
         {
-            //Debug.Log($"{Target.name} {effectType.ToString()} 적용: 받는 데미지 증가");
-            // target.defencedMultiple += _amount;
+            if (Target.TryGetComponent(out PlayerController player))
+            {
+                // player.attackMultiple -= 25 (%p); 100이 기본이라 가정
+            }
+            else if (Target.TryGetComponent(out BaseEnemy enemy))
+            {
+                // enemy.AttackMultiple -= 25 (%p); 100이 기본이라 가정
+            }
+            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
         }
 
         public sealed override void Remove()
         {
-            //Debug.Log($"{Target.name} {effectType.ToString()} 효과 제거됨");
-            // target.defencedMultiple -= _amount;
-        }
-
-        public override void OnTurnPassed()
-        {
-            TurnDuration--;
-            if (TurnDuration == 0)
+            if (Target.TryGetComponent(out PlayerController player))
             {
-                // target.EffectManager.RemoveEffect(this);
+                // player.AttackMultiple += 25 (%p); 100이 기본이라 가정
             }
-
-            if (TurnIgnored > 0)
+            else if (Target.TryGetComponent(out BaseEnemy enemy))
             {
-                TurnIgnored--;
-                if (TurnIgnored == 0)
-                {
-                    Debug.Log($"{EffectName} reactivated");
-                    Apply();
-                }
+                // enemy.attackMultiple += 25 (%p); 100이 기본이라 가정
             }
-        }
-
-        public override void IgnoreTurn(int turn)
-        {
-            TurnIgnored = turn;
-            Remove();
-            Debug.Log($"{EffectName} deactivated");
-        }
-
-        public override void AddTurn(int turn)
-        {
-            TurnDuration += turn;
+            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
         }
     }
 }
