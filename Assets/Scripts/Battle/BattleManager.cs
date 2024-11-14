@@ -19,6 +19,7 @@ public class BattleManager : MonoBehaviour
 
     private bool isPlayerTurn = true;
     private List<CardBehaviour> hand = new List<CardBehaviour>();
+    private List<CardBehaviour> discard = new List<CardBehaviour>();
 
     void Start()
     {
