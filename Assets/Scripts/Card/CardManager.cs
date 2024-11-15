@@ -11,10 +11,24 @@ namespace Card
     {
         private GameObject _cardPrefab;
         private readonly CardDeck _cardDeck = new CardDeck();
+        public static CardManager Instance { get; private set; }
 
         private void Awake()
         {
-            if (_cardPrefab == null) _cardPrefab = Resources.Load<GameObject>("Card/CardPrefab");
+            // 싱글턴 인스턴스 설정
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 씬 전환 시에도 유지되도록 설정
+
+            // 기존 초기화 작업 (_cardPrefab 로드)
+            if (_cardPrefab == null)
+            {
+                _cardPrefab = Resources.Load<GameObject>("Card/CardPrefab");
+            }
         }
 
         public BaseCard testCard;
@@ -29,12 +43,11 @@ namespace Card
         /// </summary>
         public CardBehaviour[] DrawCard(int amount)
         {
-            int availableCards = _cardDeck.GetRemainCardCount();
-            if (availableCards < amount)
+            // 덱에 카드가 부족하면 discardDeck을 다시 섞어서 덱으로 추가
+            if (_cardDeck.GetRemainCardCount() < amount)
             {
-                Debug.LogWarning("카드 덱 수량 부족: " + availableCards + "장만 반환합니다.");
-                amount = availableCards;
-                if (amount == 0) return null;
+                Debug.Log("덱에 카드가 부족하여 discardDeck을 다시 덱으로 만듭니다.");
+                BattleManager.Instance.ShuffleDiscardToDeck();
             }
 
             CardBehaviour[] cards = new CardBehaviour[amount];
@@ -48,6 +61,7 @@ namespace Card
 
             return cards;
         }
+
 
         /// <summary>
         /// 덱 내의 모든 카드의 "데이터"를 반환합니다.
