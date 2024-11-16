@@ -5,15 +5,14 @@ using Card;
 /// <summary>
 /// 전투 시스템을 관리하는 싱글턴 클래스입니다. 전투의 흐름과 턴 진행을 제어하며, 플레이어와 적 간의 상호작용을 담당합니다.
 /// 카드매니저 스크립트를 싱글턴으로 구현했습니다. (플레이어의 덱을 저장함으로써 원본의 덱을 통해 전투를 진행하기 위함)
-/// 카드 강화 시스템 미구현
-/// 전투 종료 함수 미구현
+/// 카드 강화 시스템 미구현 (카드 오브젝트들의 초기 레벨 1로 설정과 카드 레벨업 함수 구현이 되야 강화 시스템 구현 가능합니다.)
 /// </summary>
 
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance { get; private set; }
 
-    public List<BaseEnemy> Enemy = new List<BaseEnemy>();
+    public List<EnemyBehaviour> Enemy = new List<EnemyBehaviour>(); // 동적으로 적 오브젝트들 생성 구현 필요(맵 스크립트 작성 필요)
 
     private int maxHandSize = 5;
     private int cardsPlayedThisTurn = 0;
@@ -22,12 +21,12 @@ public class BattleManager : MonoBehaviour
     private bool isPlayerTurn = true;
     public bool IsPlayerTurn => isPlayerTurn;
     
-    private List<CardBehaviour> hand = new List<CardBehaviour>();
-    private List<CardBehaviour> discardDeck = new List<CardBehaviour>();
-    private List<CardBehaviour> useList = new List<CardBehaviour>();
+    private List<CardBehaviour> hand = new List<CardBehaviour>(); // 플레이어가 현재 턴에서 드로우한 카드
+    private List<CardBehaviour> discardDeck = new List<CardBehaviour>(); // 묘지
+    private List<CardBehaviour> useList = new List<CardBehaviour>(); // 플레이어가 현재 턴에서 선택한 사용할 카드
 
-    private BaseEnemy selectedEnemy;
-
+    private EnemyBehaviour selectedEnemy;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -43,11 +42,45 @@ public class BattleManager : MonoBehaviour
     {
         Startbattle();
     }
+    private void Update()
+    {
+        if (!PlayerController.Instance.IsRevival && PlayerController.Instance.Hp <= 0)
+        {
+            PlayerController.Instance.RevivalPlayer();
+            PlayerTurn();
+        }
+        
+        // 전투 종료 조건 확인
+        if (PlayerController.Instance != null && PlayerController.Instance.IsDead())
+        {
+            EndBattle(false); // 플레이어가 패배한 경우
+        }
+        else if (Enemy.TrueForAll(enemy => enemy.IsDead()))
+        {
+            EndBattle(true); // 모든 적이 사망한 경우, 플레이어의 승리
+        }
+    }
 
     private void Startbattle()
     {
-        
+        PlayerController.Instance.IsRevivalFalseSetting();
         PlayerTurn();
+    }
+
+    private void EndBattle(bool playerWon)
+    {
+        if (playerWon)
+        {
+            Debug.Log("플레이어가 승리했습니다!");
+            // 플레이어 승리로 전투 종료시 묘지의 카드들 플레이어 덱으로 복구
+            ShuffleDiscardToDeck();
+        }
+        else
+        {
+            Debug.Log("플레이어가 패배했습니다...");
+        }
+
+        // 전투 종료 처리 (게임매니저 스크립트에 결과 전달로 씬 전환 구현 필요) ex) GameManager.Instance.HandleBattleResult(playerWon);
     }
 
     private void PlayerTurn()
@@ -60,7 +93,7 @@ public class BattleManager : MonoBehaviour
     }
 
     // 적 오브젝트 타겟팅
-    public void SelectEnemy(BaseEnemy enemy)
+    public void SelectEnemy(EnemyBehaviour enemy)
     {
         if (!isPlayerTurn)
         {
@@ -69,7 +102,7 @@ public class BattleManager : MonoBehaviour
         }
 
         selectedEnemy = enemy;
-        Debug.Log("적이 선택되었습니다: " + enemy.gameObject.name);
+        Debug.Log("적이 선택되었습니다: " + enemy.EnemyName);
     }
 
     // 이번턴에 사용할 카드(핸드 카드 오브젝트들 클릭 또는 드래그로 이벤트 함수로 호출)
@@ -134,6 +167,7 @@ public class BattleManager : MonoBehaviour
         }
 
         useList.Clear();
+        PlayerController.Instance.EndTurn();
         EnemyTurn();
     }
 
@@ -213,7 +247,7 @@ public class BattleManager : MonoBehaviour
     }
 
     // 적 스크립트 상세 구현 후 수정 필요
-    private void EnemyActive(List<BaseEnemy> enemy)
+    private void EnemyActive(List<EnemyBehaviour> enemy)
     {
         foreach(var e in enemy)
         {

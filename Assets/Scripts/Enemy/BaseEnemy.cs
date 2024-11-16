@@ -1,29 +1,23 @@
 using UnityEngine;
 
-public class BaseEnemy : MonoBehaviour
+[CreateAssetMenu(fileName = "NewEnemy", menuName = "Enemy/BaseEnemy")]
+public class BaseEnemy : ScriptableObject
 {
-    protected int hp;
-    protected int damage;
-    protected int weight;
+    [SerializeField] private string enemyName;
+    public string EnemyName => enemyName;
 
-    public virtual void AttackPlayer()
-    {
-        Debug.Log("적이 플레이어를 공격합니다. 데미지: " + damage);
-        FindObjectOfType<PlayerController>().TakeDamage(damage);
-    }
+    [SerializeField] private int maxHp;
+    public int MaxHp => maxHp;
 
-    public void TakeDamage(int damage)
-    {
-        hp -= damage;
-        Debug.Log("적이 " + damage + "의 피해를 입었습니다. 남은 체력: " + hp);
-        if (hp <= 0)
-        {
-            OnDie();
-        }
-    }
+    [SerializeField] private int damage;
+    public int Damage => damage;
 
-    protected virtual void OnDie()
-    {
-        Debug.Log("적이 사망했습니다.");
-    }
+    [SerializeField] private int weight;
+    public int Weight => weight;
+
+    [SerializeField] private Sprite enemyImage;
+    public Sprite EnemyImage => enemyImage;
+
+    [SerializeField][TextArea] private string description;
+    public string Description => description;
 }
