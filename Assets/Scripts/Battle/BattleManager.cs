@@ -240,18 +240,16 @@ public class BattleManager : MonoBehaviour
     {
         isPlayerTurn = false;
         Debug.Log("적의 턴입니다.");
-        // 적의 행동 추가 로직
         
         EnemyActive(Enemy);
         PlayerTurn();
     }
 
-    // 적 스크립트 상세 구현 후 수정 필요
     private void EnemyActive(List<EnemyBehaviour> enemy)
     {
         foreach(var e in enemy)
         {
-            e.AttackPlayer();
+            e.Playpattern(e);
         }
     }
 }

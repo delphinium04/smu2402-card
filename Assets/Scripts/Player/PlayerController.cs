@@ -19,8 +19,14 @@ public class PlayerController : MonoBehaviour
     public bool HasDebuff => hasDebuff;
 
     // 공격, 피해, 힐에 곱하는 계수 (기본값 100%)
-    private int effectMultiplier = 100;
-    public int EffectMultiplier => effectMultiplier;
+    private int AttackeffectMultiplier = 100;
+    public int AttackEffectMultiplier => AttackeffectMultiplier;
+
+    private int HealeffectMultiplier = 100;
+    public int HealEffectMultiplier => HealEffectMultiplier;
+
+    private int TakeeffectMultiplier = 100;
+    public int TakeeEffectMultiplier => TakeeEffectMultiplier;
 
     // 동료 의사 여부
     public bool HasDoctor = false;
@@ -29,8 +35,14 @@ public class PlayerController : MonoBehaviour
     private bool ignoreEnvironmentEffect = false;
     private int ignoreEnvironmentTurns = 0;
 
-    bool canSelectNomalCard = true;
+    bool canSelectNormalCard = true;
     bool canSelectSkillCard = true;
+    bool canSelectSpecialCard = true;
+
+    private int gold = 0;
+    public int Gold => gold;
+
+    private int minGold = 0;
 
     private void Awake()
     {
@@ -46,7 +58,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int adjustedDamage = Mathf.CeilToInt(damage * (effectMultiplier / 100));
+        int adjustedDamage = Mathf.CeilToInt(damage * (TakeeffectMultiplier / 100));
         hp -= adjustedDamage;
         Debug.Log("플레이어가 " + adjustedDamage + "의 피해를 입었습니다. 남은 체력: " + hp);
     }
@@ -78,16 +90,28 @@ public class PlayerController : MonoBehaviour
             Debug.Log("회복량이 50% 감소되었습니다.");
         }
 
-        int adjustedHeal = Mathf.CeilToInt(amount * (effectMultiplier / 100));
+        int adjustedHeal = Mathf.CeilToInt(amount * (HealeffectMultiplier / 100));
         hp += adjustedHeal;
         hp = Mathf.Min(hp, maxHp); // 최대 체력을 초과하지 않도록 설정
         Debug.Log("플레이어가 " + adjustedHeal + "의 체력을 회복했습니다. 현재 체력: " + hp);
     }
 
-    public void SetEffectMultiplier(int multiplier)
+    public void SetAttackEffectMultiplier(int multiplier)
     {
-        effectMultiplier = multiplier;
-        Debug.Log("플레이어의 효과 계수가 " + multiplier + "%로 설정되었습니다.");
+        AttackeffectMultiplier = multiplier;
+        Debug.Log("플레이어의 공격 효과 계수가 " + multiplier + "%로 설정되었습니다.");
+    }
+
+    public void SetHealEffectMultiplier(int multiplier)
+    {
+        HealeffectMultiplier = multiplier;
+        Debug.Log("플레이어의 공격 효과 계수가 " + multiplier + "%로 설정되었습니다.");
+    }
+
+    public void SetTakeEffectMultiplier(int multiplier)
+    {
+        TakeeffectMultiplier = multiplier;
+        Debug.Log("플레이어의 공격 효과 계수가 " + multiplier + "%로 설정되었습니다.");
     }
 
     // 동료 의사 합류했을 때 호출
@@ -115,6 +139,49 @@ public class PlayerController : MonoBehaviour
                 ignoreEnvironmentEffect = false;
                 Debug.Log("환경변수 무시 효과가 종료되었습니다.");
             }
+        }
+        EndBuff();
+    }
+
+    // 1턴마다 버프가 종료되도록 설정 (턴이 더 긴 효과나 다른 효과가 있다면 수정 필요)
+    public void EndBuff()
+    {
+        canSelectNormalCard = true;
+        canSelectSpecialCard = true;
+        canSelectSkillCard = true;
+        AttackeffectMultiplier = 100;
+        HealeffectMultiplier = 100;
+        TakeeffectMultiplier = 100;
+    }
+
+    public void SetCanSelectNormalCard(bool value)
+    {
+        canSelectNormalCard = value;
+    }
+
+    public void SetCanSelectSkillCard(bool value)
+    {
+        canSelectSkillCard = value;
+    }
+
+    public void SetCanSelectSpecialCard(bool value)
+    {
+        canSelectSpecialCard = value;
+    }
+
+    public void IncreaseGold(int amount)
+    {
+        gold += amount;
+    }
+    public void DecreaseGold(int amount)
+    {
+        if (gold > 10)
+        { 
+            gold -= amount; 
+        }
+        else if (gold <= 10)
+        {
+            gold = minGold;
         }
     }
 

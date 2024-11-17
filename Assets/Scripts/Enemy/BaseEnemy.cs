@@ -20,4 +20,9 @@ public class BaseEnemy : ScriptableObject
 
     [SerializeField][TextArea] private string description;
     public string Description => description;
+
+    public virtual void ActivatePattern(EnemyBehaviour enemy)
+    {
+        return;
+    }
 }

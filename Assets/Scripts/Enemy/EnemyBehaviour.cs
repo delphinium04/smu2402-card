@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    [SerializeField] private BaseEnemy enemyData;
+    [SerializeField] private BaseEnemy enemyData; // 적 오브젝트 데이터 참조
 
     private int hp;
 
@@ -15,10 +15,9 @@ public class EnemyBehaviour : MonoBehaviour
         enemyName = enemyData.EnemyName;
     }
 
-    public void AttackPlayer()
+    public int GetHp()
     {
-        Debug.Log($"{enemyData.EnemyName}이(가) 플레이어를 공격합니다. 데미지: {enemyData.Damage}");
-        PlayerController.Instance.TakeDamage(enemyData.Damage);
+        return hp;
     }
 
     public void TakeDamage(int damage)
@@ -27,10 +26,25 @@ public class EnemyBehaviour : MonoBehaviour
         Debug.Log($"{enemyData.EnemyName}이(가) {damage}의 피해를 입었습니다. 남은 체력: {hp}");
     }
 
+    public void Heal(int heal)
+    {
+        hp += heal;
+        Debug.Log($"{enemyData.EnemyName}이(가) {heal}만큼 채력을 회복합니다. 남은 체력: {hp}");
+    }
+
     public bool IsDead()
     {
-        Debug.Log($"{enemyData.EnemyName}이(가) 사망했습니다.");
-        Destroy(gameObject);
-        return true;
+        if (hp <= 0)
+        {
+            Debug.Log($"{enemyData.EnemyName}이(가) 사망했습니다.");
+            Destroy(gameObject);
+            return true;
+        }
+        else return false;
+    }
+
+    public void Playpattern(EnemyBehaviour enemy)
+    {
+        enemyData.ActivatePattern(enemy);
     }
 }
