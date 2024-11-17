@@ -1,22 +1,22 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "CombatSailor", menuName = "Enemy/CombatSailor")]
 public class CombatSailor : BaseEnemy
 {
-    private void Awake()
-    {
-        hp = 35;
-        damage = 12;
-        weight = 2;
-    }
+    private int attackCount = 0; // 공격 횟수 추적
 
-    public override void AttackPlayer()
+    public override void ActivatePattern(EnemyBehaviour enemy)
     {
-        Debug.Log("전투 선원이 플레이어를 공격합니다. 데미지: " + damage);
-        FindObjectOfType<PlayerController>().TakeDamage(damage);
-    }
+        attackCount++;
 
-    protected override void OnDie()
-    {
-        Debug.Log("전투 선원이 사망했습니다.");
+        if (attackCount % 3 == 0) // 3번째 공격마다 속박 효과 부여
+        {
+            Debug.Log($"{EnemyName}이(가) 플레이어에게 속박을 부여했습니다. 플레이어는 이번 턴 동안 일반 카드를 사용할 수 없습니다.");
+            PlayerController.Instance.SetCanSelectNormalCard(false);
+        }
+        else
+        {
+            PlayerController.Instance.TakeDamage(Damage);
+        }
     }
 }

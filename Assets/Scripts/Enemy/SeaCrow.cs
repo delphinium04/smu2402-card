@@ -1,10 +1,10 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "cleaner", menuName = "Enemy/cleaner")]
-public class cleaner : BaseEnemy
+[CreateAssetMenu(fileName = "SeaCrow", menuName = "Enemy/SeaCrow")]
+public class SeaCrow : BaseEnemy
 {
     public override void ActivatePattern(EnemyBehaviour enemy)
     {
         PlayerController.Instance.TakeDamage(Damage);
     }
-}  
+}

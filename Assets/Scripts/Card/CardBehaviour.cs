@@ -49,5 +49,23 @@ namespace Card
             }
             Card.Use(targets);
         }
+
+        // 전투 중에 카드 오브젝트 클릭 시 이벤트 함수
+        private void OnMouseDown()
+        {
+            if (BattleManager.Instance != null && BattleManager.Instance.IsPlayerTurn)
+            {
+                if (BattleManager.Instance.IsCardInUseList(this))
+                {
+                    // 카드가 이미 선택된 경우, 선택을 취소합니다.
+                    BattleManager.Instance.CancelCardSelection(this);
+                }
+                else
+                {
+                    // 카드가 아직 선택되지 않은 경우, 카드를 선택합니다.
+                    BattleManager.Instance.SelectCardForUse(this);
+                }
+            }
+        }
     }
 }

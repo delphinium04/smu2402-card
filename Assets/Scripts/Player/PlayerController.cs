@@ -2,20 +2,192 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private int hp = 60;
+    public static PlayerController Instance { get; private set; }
+
+    private string playerName = "black skul";
+    public string PlayerName => playerName;
+
+    private int maxHp = 70;
+
+    private int hp = 70;
+    public int Hp => hp;
+
+    private bool isRevival = false; // 플레이어 최초 사망 부활 확인
+    public bool IsRevival => isRevival;
+
+    private bool hasDebuff = false; // 부활 후 회복량 감소 디버프 여부
+    public bool HasDebuff => hasDebuff;
+
+    // 공격, 피해, 힐에 곱하는 계수 (기본값 100%)
+    private int AttackeffectMultiplier = 100;
+    public int AttackEffectMultiplier => AttackeffectMultiplier;
+
+    private int HealeffectMultiplier = 100;
+    public int HealEffectMultiplier => HealEffectMultiplier;
+
+    private int TakeeffectMultiplier = 100;
+    public int TakeeEffectMultiplier => TakeeEffectMultiplier;
+
+    // 동료 의사 여부
+    public bool HasDoctor = false;
+
+    // 환경변수 영향 무시 여부와 남은 턴 수
+    private bool ignoreEnvironmentEffect = false;
+    private int ignoreEnvironmentTurns = 0;
+
+    bool canSelectNormalCard = true;
+    bool canSelectSkillCard = true;
+    bool canSelectSpecialCard = true;
+
+    private int gold = 0;
+    public int Gold => gold;
+
+    private int minGold = 0;
+
+    private void Awake()
+    {
+        // 싱글턴 인스턴스 설정
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // 씬 전환 시에도 유지되도록 설정
+    }
 
     public void TakeDamage(int damage)
     {
-        hp -= damage;
-        Debug.Log("플레이어가 " + damage + "의 피해를 입었습니다. 남은 체력: " + hp);
-        if (hp <= 0)
+        int adjustedDamage = Mathf.CeilToInt(damage * (TakeeffectMultiplier / 100));
+        hp -= adjustedDamage;
+        Debug.Log("플레이어가 " + adjustedDamage + "의 피해를 입었습니다. 남은 체력: " + hp);
+    }
+
+    public void IsRevivalFalseSetting()
+    {
+        isRevival = false;
+        hasDebuff = false;
+        ignoreEnvironmentEffect = false;
+        ignoreEnvironmentTurns = 0;
+    }
+
+    public void RevivalPlayer()
+    {
+        if (!isRevival && hp <= 0)
         {
-            OnDie();
+            hp = HasDoctor ? 30 : 1;
+            isRevival = true;
+            hasDebuff = true;
+            Debug.Log("플레이어가 부활했습니다. 회복량이 50% 감소됩니다. 부활 후 체력: " + hp);
         }
     }
 
-    private void OnDie()
+    public void Heal(int amount)
+    {
+        if (hasDebuff)
+        {
+            amount = Mathf.CeilToInt(amount * 0.5f); // 회복량 -50%
+            Debug.Log("회복량이 50% 감소되었습니다.");
+        }
+
+        int adjustedHeal = Mathf.CeilToInt(amount * (HealeffectMultiplier / 100));
+        hp += adjustedHeal;
+        hp = Mathf.Min(hp, maxHp); // 최대 체력을 초과하지 않도록 설정
+        Debug.Log("플레이어가 " + adjustedHeal + "의 체력을 회복했습니다. 현재 체력: " + hp);
+    }
+
+    public void SetAttackEffectMultiplier(int multiplier)
+    {
+        AttackeffectMultiplier = multiplier;
+        Debug.Log("플레이어의 공격 효과 계수가 " + multiplier + "%로 설정되었습니다.");
+    }
+
+    public void SetHealEffectMultiplier(int multiplier)
+    {
+        HealeffectMultiplier = multiplier;
+        Debug.Log("플레이어의 공격 효과 계수가 " + multiplier + "%로 설정되었습니다.");
+    }
+
+    public void SetTakeEffectMultiplier(int multiplier)
+    {
+        TakeeffectMultiplier = multiplier;
+        Debug.Log("플레이어의 공격 효과 계수가 " + multiplier + "%로 설정되었습니다.");
+    }
+
+    // 동료 의사 합류했을 때 호출
+    public void JoinDoctor()
+    {
+        HasDoctor = true;
+    }
+
+    // 환경변수 3턴간 무시 기능 활성화
+    public void ActivateEnvironmentEffectIgnore()
+    {
+        ignoreEnvironmentEffect = true;
+        ignoreEnvironmentTurns = 3;
+        Debug.Log("플레이어가 " + 3 + "턴 동안 환경변수를 무시합니다.");
+    }
+
+    public void EndTurn()
+    {
+        if (ignoreEnvironmentEffect && ignoreEnvironmentTurns > 0)
+        {
+            ignoreEnvironmentTurns--;
+
+            if (ignoreEnvironmentTurns == 0)
+            {
+                ignoreEnvironmentEffect = false;
+                Debug.Log("환경변수 무시 효과가 종료되었습니다.");
+            }
+        }
+        EndBuff();
+    }
+
+    // 1턴마다 버프가 종료되도록 설정 (턴이 더 긴 효과나 다른 효과가 있다면 수정 필요)
+    public void EndBuff()
+    {
+        canSelectNormalCard = true;
+        canSelectSpecialCard = true;
+        canSelectSkillCard = true;
+        AttackeffectMultiplier = 100;
+        HealeffectMultiplier = 100;
+        TakeeffectMultiplier = 100;
+    }
+
+    public void SetCanSelectNormalCard(bool value)
+    {
+        canSelectNormalCard = value;
+    }
+
+    public void SetCanSelectSkillCard(bool value)
+    {
+        canSelectSkillCard = value;
+    }
+
+    public void SetCanSelectSpecialCard(bool value)
+    {
+        canSelectSpecialCard = value;
+    }
+
+    public void IncreaseGold(int amount)
+    {
+        gold += amount;
+    }
+    public void DecreaseGold(int amount)
+    {
+        if (gold > 10)
+        { 
+            gold -= amount; 
+        }
+        else if (gold <= 10)
+        {
+            gold = minGold;
+        }
+    }
+
+    public bool IsDead()
     {
         Debug.Log("플레이어가 사망했습니다.");
+        return (isRevival == true && hp <= 0);
     }
 }
