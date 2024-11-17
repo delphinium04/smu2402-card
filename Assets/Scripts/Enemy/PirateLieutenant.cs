@@ -8,12 +8,12 @@ public class PirateLieutenant : BaseEnemy
     {
         PlayerController.Instance.TakeDamage(Damage);
 
-        if (Random.value <= 0.5f) // 50% È®·ü
+        if (Random.value <= 0.5f) // 50% È®ï¿½ï¿½
         {
-            PlayerController.Instance.SetTakeEffectMultiplier(150);
+            PlayerController.Instance.TakeMultiplier += 50;
         }
 
-        if (enemy.GetHp() <= 30 && !IsHeal)
+        if (enemy.HP <= 30 && !IsHeal)
         {
             enemy.Heal(30);
             IsHeal = true;

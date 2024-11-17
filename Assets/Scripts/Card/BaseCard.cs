@@ -29,11 +29,6 @@ namespace Card
         private TargetingType targetingType;
         public TargetingType TargetingType => targetingType;
 
-        // When TargetingType is multiple
-        [SerializeField]
-        private int maxTargetCount;
-        public int MaxTargetCount => maxTargetCount;
-
         /// <returns>True when used</returns>
         public abstract void Use(params GameObject[] targets);
 

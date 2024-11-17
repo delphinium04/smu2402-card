@@ -3,191 +3,167 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
-
-    private string playerName = "black skul";
-    public string PlayerName => playerName;
-
+    
+    public string PlayerName { get; private set; } = "black skull";
     private int maxHp = 70;
+    public int Hp { get; private set; } = 70;
 
-    private int hp = 70;
-    public int Hp => hp;
+    public bool isRevived { get; private set; } = false; // í”Œë ˆì´ì–´ ìµœì´ˆ ì‚¬ë§ ë¶€í™œ í™•ì¸
+    public bool HasDebuff { get; private set; } = false; // ë¶€í™œ í›„ íšŒë³µëŸ‰ ê°ì†Œ ë””ë²„í”„ ì—¬ë¶€
+    
+    // ê³µê²©, í”¼í•´, íì— ê³±í•˜ëŠ” ê³„ìˆ˜ (ê¸°ë³¸ê°’ 100%)
+    private int attackMultiplier = 100;
+    public int AttackMultiplier
+    {
+        get => attackMultiplier;
+        set
+        {
+            attackMultiplier = value;
+            Debug.Log("í”Œë ˆì´ì–´ì˜ ê³µê²© íš¨ê³¼ ê³„ìˆ˜ê°€ " + attackMultiplier + "%ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
+        }
+    }
 
-    private bool isRevival = false; // ÇÃ·¹ÀÌ¾î ÃÖÃÊ »ç¸Á ºÎÈ° È®ÀÎ
-    public bool IsRevival => isRevival;
-
-    private bool hasDebuff = false; // ºÎÈ° ÈÄ È¸º¹·® °¨¼Ò µğ¹öÇÁ ¿©ºÎ
-    public bool HasDebuff => hasDebuff;
-
-    // °ø°İ, ÇÇÇØ, Èú¿¡ °öÇÏ´Â °è¼ö (±âº»°ª 100%)
-    private int AttackeffectMultiplier = 100;
-    public int AttackEffectMultiplier => AttackeffectMultiplier;
-
-    private int HealeffectMultiplier = 100;
-    public int HealEffectMultiplier => HealEffectMultiplier;
-
-    private int TakeeffectMultiplier = 100;
-    public int TakeeEffectMultiplier => TakeeEffectMultiplier;
-
-    // µ¿·á ÀÇ»ç ¿©ºÎ
+    private int healMultiplier = 100;
+    public int HealMultiplier
+    {
+        get => healMultiplier;
+        set
+        {
+            healMultiplier = value;
+            Debug.Log("í”Œë ˆì´ì–´ì˜ íšŒë³µ íš¨ê³¼ ê³„ìˆ˜ê°€ " + healMultiplier + "%ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
+        }
+    }
+    private int takeMultiplier = 100;
+    public int TakeMultiplier
+    {
+        get => takeMultiplier;
+        set
+        {
+            takeMultiplier = value;
+            Debug.Log("í”Œë ˆì´ì–´ì˜ í”¼í•´ íš¨ê³¼ ê³„ìˆ˜ê°€ " + takeMultiplier + "%ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
+        }
+    }
+    
+    // ë™ë£Œ ì˜ì‚¬ ì—¬ë¶€
     public bool HasDoctor = false;
 
-    // È¯°æº¯¼ö ¿µÇâ ¹«½Ã ¿©ºÎ¿Í ³²Àº ÅÏ ¼ö
+    // í™˜ê²½ë³€ìˆ˜ ì˜í–¥ ë¬´ì‹œ ì—¬ë¶€ì™€ ë‚¨ì€ í„´ ìˆ˜
     private bool ignoreEnvironmentEffect = false;
     private int ignoreEnvironmentTurns = 0;
 
-    bool canSelectNormalCard = true;
-    bool canSelectSkillCard = true;
-    bool canSelectSpecialCard = true;
+    public bool canSelectNormalCard = true;
+    public bool canSelectSkillCard = true;
+    public bool canSelectSpecialCard = true;
 
-    private int gold = 0;
-    public int Gold => gold;
+    public int Gold { get; private set; } = 0;
 
     private int minGold = 0;
 
     private void Awake()
     {
-        // ½Ì±ÛÅÏ ÀÎ½ºÅÏ½º ¼³Á¤
+        // ì‹±ê¸€í„´ ì¸ìŠ¤í„´ìŠ¤ ì„¤ì •
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // ¾À ÀüÈ¯ ½Ã¿¡µµ À¯ÁöµÇµµ·Ï ¼³Á¤
+        DontDestroyOnLoad(gameObject); // ì”¬ ì „í™˜ ì‹œì—ë„ ìœ ì§€ë˜ë„ë¡ ì„¤ì •
     }
 
     public void TakeDamage(int damage)
     {
-        int adjustedDamage = Mathf.CeilToInt(damage * (TakeeffectMultiplier / 100));
-        hp -= adjustedDamage;
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ " + adjustedDamage + "ÀÇ ÇÇÇØ¸¦ ÀÔ¾ú½À´Ï´Ù. ³²Àº Ã¼·Â: " + hp);
+        int adjustedDamage = Mathf.CeilToInt(damage * (takeMultiplier / 100));
+        Hp -= adjustedDamage;
+        Debug.Log("í”Œë ˆì´ì–´ê°€ " + adjustedDamage + "ì˜ í”¼í•´ë¥¼ ì…ì—ˆìŠµë‹ˆë‹¤. ë‚¨ì€ ì²´ë ¥: " + Hp);
     }
 
-    public void IsRevivalFalseSetting()
+    public void ResetSetting()
     {
-        isRevival = false;
-        hasDebuff = false;
+        isRevived = false;
+        HasDebuff = false;
         ignoreEnvironmentEffect = false;
         ignoreEnvironmentTurns = 0;
     }
 
-    public void RevivalPlayer()
+    public void RevivePlayer()
     {
-        if (!isRevival && hp <= 0)
+        if (!isRevived && Hp <= 0)
         {
-            hp = HasDoctor ? 30 : 1;
-            isRevival = true;
-            hasDebuff = true;
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ºÎÈ°Çß½À´Ï´Ù. È¸º¹·®ÀÌ 50% °¨¼ÒµË´Ï´Ù. ºÎÈ° ÈÄ Ã¼·Â: " + hp);
+            Hp = HasDoctor ? 30 : 1;
+            isRevived = true;
+            HasDebuff = true;
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ë¶€í™œí–ˆìŠµë‹ˆë‹¤. íšŒë³µëŸ‰ì´ 50% ê°ì†Œë©ë‹ˆë‹¤. ë¶€í™œ í›„ ì²´ë ¥: " + Hp);
         }
     }
 
     public void Heal(int amount)
     {
-        if (hasDebuff)
+        if (HasDebuff)
         {
-            amount = Mathf.CeilToInt(amount * 0.5f); // È¸º¹·® -50%
-            Debug.Log("È¸º¹·®ÀÌ 50% °¨¼ÒµÇ¾ú½À´Ï´Ù.");
+            amount = Mathf.CeilToInt(amount * 0.5f); // íšŒë³µëŸ‰ -50%
+            Debug.Log("íšŒë³µëŸ‰ì´ 50% ê°ì†Œë˜ì—ˆìŠµë‹ˆë‹¤.");
         }
 
-        int adjustedHeal = Mathf.CeilToInt(amount * (HealeffectMultiplier / 100));
-        hp += adjustedHeal;
-        hp = Mathf.Min(hp, maxHp); // ÃÖ´ë Ã¼·ÂÀ» ÃÊ°úÇÏÁö ¾Êµµ·Ï ¼³Á¤
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ " + adjustedHeal + "ÀÇ Ã¼·ÂÀ» È¸º¹Çß½À´Ï´Ù. ÇöÀç Ã¼·Â: " + hp);
+        int adjustedHeal = Mathf.CeilToInt(amount * (healMultiplier / 100));
+        Hp += adjustedHeal;
+        Hp = Mathf.Min(Hp, maxHp); // ìµœëŒ€ ì²´ë ¥ì„ ì´ˆê³¼í•˜ì§€ ì•Šë„ë¡ ì„¤ì •
+        Debug.Log("í”Œë ˆì´ì–´ê°€ " + adjustedHeal + "ì˜ ì²´ë ¥ì„ íšŒë³µí–ˆìŠµë‹ˆë‹¤. í˜„ì¬ ì²´ë ¥: " + Hp);
     }
 
-    public void SetAttackEffectMultiplier(int multiplier)
-    {
-        AttackeffectMultiplier = multiplier;
-        Debug.Log("ÇÃ·¹ÀÌ¾îÀÇ °ø°İ È¿°ú °è¼ö°¡ " + multiplier + "%·Î ¼³Á¤µÇ¾ú½À´Ï´Ù.");
-    }
-
-    public void SetHealEffectMultiplier(int multiplier)
-    {
-        HealeffectMultiplier = multiplier;
-        Debug.Log("ÇÃ·¹ÀÌ¾îÀÇ °ø°İ È¿°ú °è¼ö°¡ " + multiplier + "%·Î ¼³Á¤µÇ¾ú½À´Ï´Ù.");
-    }
-
-    public void SetTakeEffectMultiplier(int multiplier)
-    {
-        TakeeffectMultiplier = multiplier;
-        Debug.Log("ÇÃ·¹ÀÌ¾îÀÇ °ø°İ È¿°ú °è¼ö°¡ " + multiplier + "%·Î ¼³Á¤µÇ¾ú½À´Ï´Ù.");
-    }
-
-    // µ¿·á ÀÇ»ç ÇÕ·ùÇßÀ» ¶§ È£Ãâ
+    // ë™ë£Œ ì˜ì‚¬ í•©ë¥˜í–ˆì„ ë•Œ í˜¸ì¶œ
     public void JoinDoctor()
     {
         HasDoctor = true;
     }
 
-    // È¯°æº¯¼ö 3ÅÏ°£ ¹«½Ã ±â´É È°¼ºÈ­
+    // í™˜ê²½ë³€ìˆ˜ 3í„´ê°„ ë¬´ì‹œ ê¸°ëŠ¥ í™œì„±í™”
     public void ActivateEnvironmentEffectIgnore()
     {
         ignoreEnvironmentEffect = true;
         ignoreEnvironmentTurns = 3;
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ " + 3 + "ÅÏ µ¿¾È È¯°æº¯¼ö¸¦ ¹«½ÃÇÕ´Ï´Ù.");
+        Debug.Log("í”Œë ˆì´ì–´ê°€ " + 3 + "í„´ ë™ì•ˆ í™˜ê²½ë³€ìˆ˜ë¥¼ ë¬´ì‹œí•©ë‹ˆë‹¤.");
     }
 
     public void EndTurn()
     {
-        if (ignoreEnvironmentEffect && ignoreEnvironmentTurns > 0)
+        if (ignoreEnvironmentTurns > 0)
         {
             ignoreEnvironmentTurns--;
 
             if (ignoreEnvironmentTurns == 0)
             {
                 ignoreEnvironmentEffect = false;
-                Debug.Log("È¯°æº¯¼ö ¹«½Ã È¿°ú°¡ Á¾·áµÇ¾ú½À´Ï´Ù.");
+                Debug.Log("í™˜ê²½ë³€ìˆ˜ ë¬´ì‹œ íš¨ê³¼ê°€ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
             }
         }
         EndBuff();
     }
 
-    // 1ÅÏ¸¶´Ù ¹öÇÁ°¡ Á¾·áµÇµµ·Ï ¼³Á¤ (ÅÏÀÌ ´õ ±ä È¿°ú³ª ´Ù¸¥ È¿°ú°¡ ÀÖ´Ù¸é ¼öÁ¤ ÇÊ¿ä)
+    // 1í„´ë§ˆë‹¤ ë²„í”„ê°€ ì¢…ë£Œë˜ë„ë¡ ì„¤ì • 
     public void EndBuff()
     {
         canSelectNormalCard = true;
         canSelectSpecialCard = true;
         canSelectSkillCard = true;
-        AttackeffectMultiplier = 100;
-        HealeffectMultiplier = 100;
-        TakeeffectMultiplier = 100;
     }
-
-    public void SetCanSelectNormalCard(bool value)
-    {
-        canSelectNormalCard = value;
-    }
-
-    public void SetCanSelectSkillCard(bool value)
-    {
-        canSelectSkillCard = value;
-    }
-
-    public void SetCanSelectSpecialCard(bool value)
-    {
-        canSelectSpecialCard = value;
-    }
-
+    
     public void IncreaseGold(int amount)
     {
-        gold += amount;
+        Gold += amount;
     }
     public void DecreaseGold(int amount)
     {
-        if (gold > 10)
+        if (Gold > 10)
         { 
-            gold -= amount; 
+            Gold -= amount; 
         }
-        else if (gold <= 10)
+        else if (Gold <= 10)
         {
-            gold = minGold;
+            Gold = minGold;
         }
     }
 
     public bool IsDead()
-    {
-        Debug.Log("ÇÃ·¹ÀÌ¾î°¡ »ç¸ÁÇß½À´Ï´Ù.");
-        return (isRevival == true && hp <= 0);
-    }
+        => (isRevived == true && Hp <= 0);
 }

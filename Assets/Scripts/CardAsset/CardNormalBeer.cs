@@ -21,7 +21,7 @@ namespace CardAsset
         public override void Use(params GameObject[] targets)
         {
             int healAmount = HealAmount;
-            PlayerController p = FindObjectOfType<PlayerController>();
+            PlayerController p = PlayerController.Instance;
 
             if (CardLevel == CardLevel.Two) healAmount = HealAmount * 2;
             if(cardLevel == CardLevel.Three)
@@ -33,7 +33,7 @@ namespace CardAsset
             
             if(hasExtraHeal) healAmount += 2;
             
-            // p.Heal();
+            p.Heal(healAmount);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace CardAsset
             }
             if (hasExtraDamage) damageValue++;
             
-            if(GetComponent(targets[0], out BaseEnemy enemy))
+            if(GetComponent(targets[0], out EnemyBehaviour enemy))
                 enemy.TakeDamage(damageValue);
         }
     }

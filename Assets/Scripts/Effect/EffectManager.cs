@@ -20,7 +20,6 @@ namespace Effect
         // For Accessory
         public bool HasCross;
 
-
         public enum Kind
         {
             Debuff,
@@ -31,7 +30,7 @@ namespace Effect
         private EffectManager()
         {
             _effects = new List<BaseEffect>();
-            // gameManager.onTurnIncreased: Action(or Event) += OnTurnIncrease;
+            BattleManager.Instance.OnTurnPassed += OnTurnPassed;
         }
 
         public IReadOnlyList<BaseEffect> GetEffects(Kind kind = Kind.All)

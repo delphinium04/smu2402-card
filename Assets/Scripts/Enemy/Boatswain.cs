@@ -5,31 +5,31 @@ using UnityEngine;
 public class Boatswain : BaseEnemy
 {
     [SerializeField]
-    private GameObject cleanerPrefab; // Ã»¼ÒºÎ ÇÁ¸®ÆÕÀ» ÂüÁ¶ÇÏ´Â º¯¼ö
+    private GameObject cleanerPrefab; // ì²­ì†Œë¶€ í”„ë¦¬íŒ¹ì„ ì°¸ì¡°í•˜ëŠ” ë³€ìˆ˜
 
     private bool IsCleaner = false;
 
     public override void ActivatePattern(EnemyBehaviour enemy)
     {
-        Debug.Log($"BoatswainÀÌ(°¡) 2È¸ °ø°İÇÕ´Ï´Ù. ³²Àº Ã¼·Â:" + PlayerController.Instance.Hp);
+        Debug.Log($"Boatswainì´(ê°€) 2íšŒ ê³µê²©í•©ë‹ˆë‹¤. ë‚¨ì€ ì²´ë ¥:" + PlayerController.Instance.Hp);
         for (int i = 0; i < 2; i++)
         {
             PlayerController.Instance.TakeDamage(Damage);
         }
 
-        if (enemy.GetHp() <= 30 && !IsCleaner)
+        if (enemy.HP <= 30 && !IsCleaner)
         {
-            SummonCleaner(); // Ã¼·ÂÀÌ 30 ÀÌÇÏ·Î ³»·Á°¥ °æ¿ì Æ¯¼ö Çàµ¿
+            SummonCleaner(); // ì²´ë ¥ì´ 30 ì´í•˜ë¡œ ë‚´ë ¤ê°ˆ ê²½ìš° íŠ¹ìˆ˜ í–‰ë™
             IsCleaner = true;
         }
     }
 
     public void SummonCleaner()
     {
-        Debug.Log($"{EnemyName}ÀÌ Ã»¼ÒºÎ¸¦ ¼ÒÈ¯ÇÕ´Ï´Ù.");
+        Debug.Log($"{EnemyName}ì´ ì²­ì†Œë¶€ë¥¼ ì†Œí™˜í•©ë‹ˆë‹¤.");
 
-        // ÇÁ¸®ÆÕÀ» ¼ÒÈ¯ÇÏ±â À§ÇÑ À§Ä¡ ¼³Á¤ (ÇØ´ç ÀûÀÇ µ¿Àû »ı¼º ±¸Çö ÈÄ ´Ù½Ã ±¸ÇöÇÏ±â)
-        Vector2 spawnPosition = new Vector2(1, 0); // ÇöÀç À§Ä¡ ±âÁØÀ¸·Î ¾à°£ ¿À¸¥ÂÊ¿¡ »ı¼º ( + transform.position)
+        // í”„ë¦¬íŒ¹ì„ ì†Œí™˜í•˜ê¸° ìœ„í•œ ìœ„ì¹˜ ì„¤ì • (í•´ë‹¹ ì ì˜ ë™ì  ìƒì„± êµ¬í˜„ í›„ ë‹¤ì‹œ êµ¬í˜„í•˜ê¸°)
+        Vector2 spawnPosition = new Vector2(1, 0); // í˜„ì¬ ìœ„ì¹˜ ê¸°ì¤€ìœ¼ë¡œ ì•½ê°„ ì˜¤ë¥¸ìª½ì— ìƒì„± ( + transform.position)
 
         Instantiate(cleanerPrefab, spawnPosition, Quaternion.identity);
     }

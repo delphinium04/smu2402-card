@@ -40,7 +40,7 @@ namespace CardAsset
             });
 
             if (isUpgraded) return;
-            PlayerController p = FindObjectOfType<PlayerController>();
+            PlayerController p = PlayerController.Instance;
             if (!GetComponent(p.gameObject, out EffectManager em)) return;
             em.AddEffect(effect1, turn);
             em.AddEffect(effect2, turn);

@@ -10,20 +10,12 @@ namespace EffectAsset
     {
         protected override void Apply()
         {
-            if (Target.TryGetComponent(out PlayerController player))
-            {
-                // player.damageMultiple -= 25 (%p); 100이 기본이라 가정
-            }
-            else if (Target.TryGetComponent(out BaseEnemy enemy))
-            {
-                // enemy.damageMultiple -= 25 (%p); 100이 기본이라 가정
-            }
-            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
+            PlayerController.Instance.canSelectSkillCard = false;
         }
 
         public sealed override void Remove()
         {
-            // player. -= 50;
+            PlayerController.Instance.canSelectSkillCard = true;
         }
     }
 }

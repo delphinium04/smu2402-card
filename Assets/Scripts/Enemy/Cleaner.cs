@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "cleaner", menuName = "Enemy/cleaner")]
-public class cleaner : BaseEnemy
+[CreateAssetMenu(fileName = "Cleaner", menuName = "Enemy/Cleaner")]
+public class Cleaner : BaseEnemy
 {
     public override void ActivatePattern(EnemyBehaviour enemy)
     {

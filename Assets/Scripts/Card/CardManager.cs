@@ -13,16 +13,17 @@ namespace Card
         private readonly CardDeck _cardDeck = new CardDeck();
         public static CardManager Instance { get; private set; }
 
+        public List<BaseCard> TestCardList = new List<BaseCard>();
+
         private void Awake()
         {
-            // 싱글턴 인스턴스 설정
             if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
             Instance = this;
-            DontDestroyOnLoad(gameObject); // 씬 전환 시에도 유지되도록 설정
+            DontDestroyOnLoad(gameObject);
 
             // 기존 초기화 작업 (_cardPrefab 로드)
             if (_cardPrefab == null)
@@ -31,16 +32,24 @@ namespace Card
             }
         }
 
+        void Start()
+        {
+            // TEST
+            _cardDeck.AddCard(TestCardList.ToArray());
+        }
+
         /// <summary>
         /// 가능한 amount만큼 카드 오브젝트를 만들어 반환합니다.
         /// </summary>
         public CardBehaviour[] DrawCard(int amount)
         {
-            // 덱에 카드가 부족하면 discardDeck을 다시 섞어서 덱으로 추가
             if (_cardDeck.GetRemainCardCount() < amount)
+                amount = _cardDeck.GetRemainCardCount();
+
+            if (amount == 0)
             {
-                Debug.Log("덱에 카드가 부족하여 discardDeck을 다시 덱으로 만듭니다.");
-                BattleManager.Instance.ShuffleDiscardToDeck();
+                Debug.LogWarning("No Card to draw");
+                return null;
             }
 
             CardBehaviour[] cards = new CardBehaviour[amount];
@@ -70,10 +79,7 @@ namespace Card
             => CreateCardInstance(cardData);
 
         public void AddCardToDeck(params CardBehaviour[] cards)
-        {
-            Debug.LogWarning("카드 데이터가 아닌 카드 오브젝트가 들어옴");
-            AddCardToDeck((from card in cards select card.GetComponent<BaseCard>()).ToArray());
-        }
+            => AddCardToDeck((from card in cards select card.GetComponent<BaseCard>()).ToArray());
 
         public void AddCardToDeck(params BaseCard[] cards)
             => _cardDeck.AddCard(cards);

@@ -19,7 +19,7 @@ namespace CardAsset
                 return;
             }
 
-            PlayerController p = FindObjectOfType<PlayerController>();
+            PlayerController p = PlayerController.Instance;
             if (isUpgraded)
             {
                 // p.heal(HealAmount * 2);

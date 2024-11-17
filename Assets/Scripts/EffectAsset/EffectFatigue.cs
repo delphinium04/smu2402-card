@@ -11,13 +11,13 @@ namespace EffectAsset
         {
             if (Target.TryGetComponent(out PlayerController player))
             {
-                // player.defenceMultiple -= 50 (%p); 100이 기본, 증가할 수록 좋다고 가정
+                player.TakeMultiplier += 50;
             }
-            else if (Target.TryGetComponent(out BaseEnemy enemy))
+            else if (Target.TryGetComponent(out EnemyBehaviour enemy))
             {
-                // enemy.defenceMultiple -= 50 (%p);
+                enemy.TakeMultiplier += 50;
             }
-            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
+            else Debug.LogError($"{GetType().Name}: No EnemyBehaviour or PlayerController in {Target.name}");
         }
 
         public sealed override void Remove()
@@ -26,13 +26,13 @@ namespace EffectAsset
             
             if (Target.TryGetComponent(out PlayerController player))
             {
-                // player.defenceMultiple += 50 (%p); 100이 기본, 증가할 수록 좋다고 가정
+                player.TakeMultiplier -= 50;
             }
-            else if (Target.TryGetComponent(out BaseEnemy enemy))
-            {
-                // enemy.defenceMultiple += 50 (%p);
+            else if (Target.TryGetComponent(out EnemyBehaviour enemy))
+            {               
+                enemy.TakeMultiplier -= 50;
             }
-            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
+            else Debug.LogError($"{GetType().Name}: No EnemyBehaviour or PlayerController in {Target.name}");
         }
     }
 }

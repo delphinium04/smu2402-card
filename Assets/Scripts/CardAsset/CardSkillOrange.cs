@@ -16,7 +16,7 @@ namespace CardAsset
         
         public override void Use(params GameObject[] targets)
         {
-            PlayerController p = FindObjectOfType<PlayerController>();
+            PlayerController p = PlayerController.Instance;
 
             if (!GetComponent(p.gameObject, out EffectManager em)) return;
 

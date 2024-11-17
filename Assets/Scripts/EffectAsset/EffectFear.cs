@@ -13,11 +13,7 @@ namespace EffectAsset
             {
                 // Effect Add
             }
-            else if (Target.TryGetComponent(out BaseEnemy enemy))
-            {
-                // Effect Add
-            }
-            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
+            else Debug.LogError($"{GetType().Name}: No PlayerController in {Target.name}");
         }
 
         public sealed override void Remove()
@@ -26,13 +22,9 @@ namespace EffectAsset
             
             if (Target.TryGetComponent(out PlayerController player))
             {
-                // Effect Remove
+                // Effect Add
             }
-            else if (Target.TryGetComponent(out BaseEnemy enemy))
-            {
-                // Effect Remove
-            }
-            else Debug.LogError($"{GetType().Name}: No BaseEnemy or PlayerController in {Target.name}");
+            else Debug.LogError($"{GetType().Name}: No PlayerController in {Target.name}");
         }
     }
 }

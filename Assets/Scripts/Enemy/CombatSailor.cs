@@ -3,16 +3,16 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "CombatSailor", menuName = "Enemy/CombatSailor")]
 public class CombatSailor : BaseEnemy
 {
-    private int attackCount = 0; // °ø°İ È½¼ö ÃßÀû
+    private int attackCount = 0; // ê³µê²© íšŸìˆ˜ ì¶”ì 
 
     public override void ActivatePattern(EnemyBehaviour enemy)
     {
         attackCount++;
 
-        if (attackCount % 3 == 0) // 3¹øÂ° °ø°İ¸¶´Ù ¼Ó¹Ú È¿°ú ºÎ¿©
+        if (attackCount % 3 == 0) // 3ë²ˆì§¸ ê³µê²©ë§ˆë‹¤ ì†ë°• íš¨ê³¼ ë¶€ì—¬
         {
-            Debug.Log($"{EnemyName}ÀÌ(°¡) ÇÃ·¹ÀÌ¾î¿¡°Ô ¼Ó¹ÚÀ» ºÎ¿©Çß½À´Ï´Ù. ÇÃ·¹ÀÌ¾î´Â ÀÌ¹ø ÅÏ µ¿¾È ÀÏ¹İ Ä«µå¸¦ »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù.");
-            PlayerController.Instance.SetCanSelectNormalCard(false);
+            Debug.Log($"{EnemyName}ì´(ê°€) í”Œë ˆì´ì–´ì—ê²Œ ì†ë°•ì„ ë¶€ì—¬í–ˆìŠµë‹ˆë‹¤. í”Œë ˆì´ì–´ëŠ” ì´ë²ˆ í„´ ë™ì•ˆ ì¼ë°˜ ì¹´ë“œë¥¼ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+            PlayerController.Instance.canSelectNormalCard = true;
         }
         else
         {

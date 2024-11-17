@@ -26,7 +26,7 @@ namespace CardAsset
             for (int i = 0; i < 5; i++)
             {
                 int randomIndex = Random.Range(0, targets.Length);
-                if (GetComponent(targets[randomIndex], out BaseEnemy enemy))
+                if (GetComponent(targets[randomIndex], out EnemyBehaviour enemy))
                     enemy.TakeDamage(damage);
             }
         }

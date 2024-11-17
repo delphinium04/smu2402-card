@@ -23,7 +23,7 @@ namespace CardAsset
                 return;
             }
 
-            PlayerController p = FindObjectOfType<PlayerController>();
+            PlayerController p = PlayerController.Instance;
             if(GetComponent(p.gameObject, out EffectManager em))
                 em.AddEffect(effect, 1 + (isUpgraded ? 1 : 0));
         }

@@ -10,12 +10,12 @@ namespace EffectAsset
     {
         protected override void Apply()
         {
-            // 일반카드 선택 제한 설정 (오직 플레이어 대상)
+            PlayerController.Instance.canSelectNormalCard = false;
         }
 
         public sealed override void Remove()
         {
-            // 일반카드 선택 제한 해제 (오직 플레이어 대상)
+            PlayerController.Instance.canSelectNormalCard = true;
         }
     }
 }

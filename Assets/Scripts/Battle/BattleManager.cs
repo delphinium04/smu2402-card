@@ -1,29 +1,33 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Card;
+using Unity.VisualScripting;
 
 /// <summary>
-/// ÀüÅõ ½Ã½ºÅÛÀ» °ü¸®ÇÏ´Â ½Ì±ÛÅÏ Å¬·¡½ºÀÔ´Ï´Ù. ÀüÅõÀÇ Èå¸§°ú ÅÏ ÁøÇàÀ» Á¦¾îÇÏ¸ç, ÇÃ·¹ÀÌ¾î¿Í Àû °£ÀÇ »óÈ£ÀÛ¿ëÀ» ´ã´çÇÕ´Ï´Ù.
-/// Ä«µå¸Å´ÏÀú ½ºÅ©¸³Æ®¸¦ ½Ì±ÛÅÏÀ¸·Î ±¸ÇöÇß½À´Ï´Ù. (ÇÃ·¹ÀÌ¾îÀÇ µ¦À» ÀúÀåÇÔÀ¸·Î½á ¿øº»ÀÇ µ¦À» ÅëÇØ ÀüÅõ¸¦ ÁøÇàÇÏ±â À§ÇÔ)
-/// Ä«µå °­È­ ½Ã½ºÅÛ ¹Ì±¸Çö (Ä«µå ¿ÀºêÁ§Æ®µéÀÇ ÃÊ±â ·¹º§ 1·Î ¼³Á¤°ú Ä«µå ·¹º§¾÷ ÇÔ¼ö ±¸ÇöÀÌ µÇ¾ß °­È­ ½Ã½ºÅÛ ±¸Çö °¡´ÉÇÕ´Ï´Ù.)
+/// ì „íˆ¬ ì‹œìŠ¤í…œì„ ê´€ë¦¬í•˜ëŠ” ì‹±ê¸€í„´ í´ë˜ìŠ¤ì…ë‹ˆë‹¤. ì „íˆ¬ì˜ íë¦„ê³¼ í„´ ì§„í–‰ì„ ì œì–´í•˜ë©°, í”Œë ˆì´ì–´ì™€ ì  ê°„ì˜ ìƒí˜¸ì‘ìš©ì„ ë‹´ë‹¹í•©ë‹ˆë‹¤.
+/// ì¹´ë“œë§¤ë‹ˆì € ìŠ¤í¬ë¦½íŠ¸ë¥¼ ì‹±ê¸€í„´ìœ¼ë¡œ êµ¬í˜„í–ˆìŠµë‹ˆë‹¤. (í”Œë ˆì´ì–´ì˜ ë±ì„ ì €ì¥í•¨ìœ¼ë¡œì¨ ì›ë³¸ì˜ ë±ì„ í†µí•´ ì „íˆ¬ë¥¼ ì§„í–‰í•˜ê¸° ìœ„í•¨)
+/// ì¹´ë“œ ê°•í™” ì‹œìŠ¤í…œ ë¯¸êµ¬í˜„ (ì¹´ë“œ ì˜¤ë¸Œì íŠ¸ë“¤ì˜ ì´ˆê¸° ë ˆë²¨ 1ë¡œ ì„¤ì •ê³¼ ì¹´ë“œ ë ˆë²¨ì—… í•¨ìˆ˜ êµ¬í˜„ì´ ë˜ì•¼ ê°•í™” ì‹œìŠ¤í…œ êµ¬í˜„ ê°€ëŠ¥í•©ë‹ˆë‹¤.)
 /// </summary>
 
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance { get; private set; }
 
-    public List<EnemyBehaviour> Enemy = new List<EnemyBehaviour>(); // µ¿ÀûÀ¸·Î Àû ¿ÀºêÁ§Æ®µé »ı¼º ±¸Çö ÇÊ¿ä(¸Ê ½ºÅ©¸³Æ® ÀÛ¼º ÇÊ¿ä)
+    public List<EnemyBehaviour> Enemy = new List<EnemyBehaviour>(); // ë™ì ìœ¼ë¡œ ì  ì˜¤ë¸Œì íŠ¸ë“¤ ìƒì„± êµ¬í˜„ í•„ìš”(ë§µ ìŠ¤í¬ë¦½íŠ¸ ì‘ì„± í•„ìš”)
 
     private int maxHandSize = 5;
     private int cardsPlayedThisTurn = 0;
     private int maxCardsPerTurn = 3;
 
+    public Action OnTurnPassed = null;
+
     private bool isPlayerTurn = true;
     public bool IsPlayerTurn => isPlayerTurn;
     
-    private List<CardBehaviour> hand = new List<CardBehaviour>(); // ÇÃ·¹ÀÌ¾î°¡ ÇöÀç ÅÏ¿¡¼­ µå·Î¿ìÇÑ Ä«µå
-    private List<CardBehaviour> discardDeck = new List<CardBehaviour>(); // ¹¦Áö
-    private List<CardBehaviour> useList = new List<CardBehaviour>(); // ÇÃ·¹ÀÌ¾î°¡ ÇöÀç ÅÏ¿¡¼­ ¼±ÅÃÇÑ »ç¿ëÇÒ Ä«µå
+    private List<CardBehaviour> hand = new List<CardBehaviour>(); // í”Œë ˆì´ì–´ê°€ í˜„ì¬ í„´ì—ì„œ ë“œë¡œìš°í•œ ì¹´ë“œ
+    private List<CardBehaviour> discardDeck = new List<CardBehaviour>(); // ë¬˜ì§€
+    private List<CardBehaviour> useList = new List<CardBehaviour>(); // í”Œë ˆì´ì–´ê°€ í˜„ì¬ í„´ì—ì„œ ì„ íƒí•œ ì‚¬ìš©í•  ì¹´ë“œ
 
     private EnemyBehaviour selectedEnemy;
     
@@ -40,30 +44,30 @@ public class BattleManager : MonoBehaviour
 
     private void Start()
     {
-        Startbattle();
+        StartBattle();
     }
     private void Update()
     {
-        if (!PlayerController.Instance.IsRevival && PlayerController.Instance.Hp <= 0)
+        if (!PlayerController.Instance.isRevived && PlayerController.Instance.Hp <= 0)
         {
-            PlayerController.Instance.RevivalPlayer();
+            PlayerController.Instance.RevivePlayer();
             PlayerTurn();
         }
         
-        // ÀüÅõ Á¾·á Á¶°Ç È®ÀÎ
+        // ì „íˆ¬ ì¢…ë£Œ ì¡°ê±´ í™•ì¸
         if (PlayerController.Instance != null && PlayerController.Instance.IsDead())
         {
-            EndBattle(false); // ÇÃ·¹ÀÌ¾î°¡ ÆĞ¹èÇÑ °æ¿ì
+            EndBattle(false); // í”Œë ˆì´ì–´ê°€ íŒ¨ë°°í•œ ê²½ìš°
         }
         else if (Enemy.TrueForAll(enemy => enemy.IsDead()))
         {
-            EndBattle(true); // ¸ğµç ÀûÀÌ »ç¸ÁÇÑ °æ¿ì, ÇÃ·¹ÀÌ¾îÀÇ ½Â¸®
+            EndBattle(true); // ëª¨ë“  ì ì´ ì‚¬ë§í•œ ê²½ìš°, í”Œë ˆì´ì–´ì˜ ìŠ¹ë¦¬
         }
     }
 
-    private void Startbattle()
+    private void StartBattle()
     {
-        PlayerController.Instance.IsRevivalFalseSetting();
+        PlayerController.Instance.ResetSetting();
         PlayerTurn();
     }
 
@@ -71,16 +75,16 @@ public class BattleManager : MonoBehaviour
     {
         if (playerWon)
         {
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ½Â¸®Çß½À´Ï´Ù!");
-            // ÇÃ·¹ÀÌ¾î ½Â¸®·Î ÀüÅõ Á¾·á½Ã ¹¦ÁöÀÇ Ä«µåµé ÇÃ·¹ÀÌ¾î µ¦À¸·Î º¹±¸
+            Debug.Log("í”Œë ˆì´ì–´ê°€ ìŠ¹ë¦¬í–ˆìŠµë‹ˆë‹¤!");
+            // í”Œë ˆì´ì–´ ìŠ¹ë¦¬ë¡œ ì „íˆ¬ ì¢…ë£Œì‹œ ë¬˜ì§€ì˜ ì¹´ë“œë“¤ í”Œë ˆì´ì–´ ë±ìœ¼ë¡œ ë³µêµ¬
             ShuffleDiscardToDeck();
         }
         else
         {
-            Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ÆĞ¹èÇß½À´Ï´Ù...");
+            Debug.Log("í”Œë ˆì´ì–´ê°€ íŒ¨ë°°í–ˆìŠµë‹ˆë‹¤...");
         }
 
-        // ÀüÅõ Á¾·á Ã³¸® (°ÔÀÓ¸Å´ÏÀú ½ºÅ©¸³Æ®¿¡ °á°ú Àü´Ş·Î ¾À ÀüÈ¯ ±¸Çö ÇÊ¿ä) ex) GameManager.Instance.HandleBattleResult(playerWon);
+        // ì „íˆ¬ ì¢…ë£Œ ì²˜ë¦¬ (ê²Œì„ë§¤ë‹ˆì € ìŠ¤í¬ë¦½íŠ¸ì— ê²°ê³¼ ì „ë‹¬ë¡œ ì”¬ ì „í™˜ êµ¬í˜„ í•„ìš”) ex) GameManager.Instance.HandleBattleResult(playerWon);
     }
 
     private void PlayerTurn()
@@ -89,34 +93,34 @@ public class BattleManager : MonoBehaviour
         cardsPlayedThisTurn = 0;
         hand = new List<CardBehaviour>(CardManager.Instance.DrawCard(maxHandSize));
         useList.Clear();
-        Debug.Log("ÇÃ·¹ÀÌ¾îÀÇ ÅÏÀÔ´Ï´Ù. Ä«µå¸¦ »ç¿ëÇÏ¼¼¿ä.");
+        Debug.Log("í”Œë ˆì´ì–´ì˜ í„´ì…ë‹ˆë‹¤. ì¹´ë“œë¥¼ ì‚¬ìš©í•˜ì„¸ìš”.");
     }
 
-    // Àû ¿ÀºêÁ§Æ® Å¸°ÙÆÃ
+    // ì  ì˜¤ë¸Œì íŠ¸ íƒ€ê²ŸíŒ…
     public void SelectEnemy(EnemyBehaviour enemy)
     {
         if (!isPlayerTurn)
         {
-            Debug.LogWarning("ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ ÅÏÀÌ ¾Æ´Õ´Ï´Ù.");
+            Debug.LogWarning("í˜„ì¬ í”Œë ˆì´ì–´ì˜ í„´ì´ ì•„ë‹™ë‹ˆë‹¤.");
             return;
         }
 
         selectedEnemy = enemy;
-        Debug.Log("ÀûÀÌ ¼±ÅÃµÇ¾ú½À´Ï´Ù: " + enemy.EnemyName);
+        Debug.Log("ì ì´ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤: " + enemy.EnemyName);
     }
 
-    // ÀÌ¹øÅÏ¿¡ »ç¿ëÇÒ Ä«µå(ÇÚµå Ä«µå ¿ÀºêÁ§Æ®µé Å¬¸¯ ¶Ç´Â µå·¡±×·Î ÀÌº¥Æ® ÇÔ¼ö·Î È£Ãâ)
+    // ì´ë²ˆí„´ì— ì‚¬ìš©í•  ì¹´ë“œ(í•¸ë“œ ì¹´ë“œ ì˜¤ë¸Œì íŠ¸ë“¤ í´ë¦­ ë˜ëŠ” ë“œë˜ê·¸ë¡œ ì´ë²¤íŠ¸ í•¨ìˆ˜ë¡œ í˜¸ì¶œ)
     public void SelectCardForUse(CardBehaviour card)
     {
         if (!isPlayerTurn)
         {
-            Debug.LogWarning("ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ ÅÏÀÌ ¾Æ´Õ´Ï´Ù.");
+            Debug.LogWarning("í˜„ì¬ í”Œë ˆì´ì–´ì˜ í„´ì´ ì•„ë‹™ë‹ˆë‹¤.");
             return;
         }
 
         if (useList.Count >= maxCardsPerTurn)
         {
-            Debug.Log("ÀÌ¹ø ÅÏ¿¡ »ç¿ëÇÒ ¼ö ÀÖ´Â ÃÖ´ë Ä«µå ¼ö¿¡ µµ´ŞÇß½À´Ï´Ù.");
+            Debug.Log("ì´ë²ˆ í„´ì— ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” ìµœëŒ€ ì¹´ë“œ ìˆ˜ì— ë„ë‹¬í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -124,28 +128,28 @@ public class BattleManager : MonoBehaviour
         {
             useList.Add(card);
             hand.Remove(card);
-            Debug.Log(card.Card.CardName + " Ä«µå¸¦ ÀÌ¹ø ÅÏ¿¡ »ç¿ëÇÏµµ·Ï ¼±ÅÃÇß½À´Ï´Ù.");
+            Debug.Log(card.Card.CardName + " ì¹´ë“œë¥¼ ì´ë²ˆ í„´ì— ì‚¬ìš©í•˜ë„ë¡ ì„ íƒí–ˆìŠµë‹ˆë‹¤.");
 
-            // ´ÜÀÏ Å¸°Ù Ä«µåÀÎ °æ¿ì Àû ¼±ÅÃ À¯µµ
+            // ë‹¨ì¼ íƒ€ê²Ÿ ì¹´ë“œì¸ ê²½ìš° ì  ì„ íƒ ìœ ë„
             if (card.Card.TargetingType == TargetingType.Single)
             {
-                Debug.Log("´ÜÀÏ Å¸°Ù Ä«µå°¡ ¼±ÅÃµÇ¾ú½À´Ï´Ù. ÀûÀ» ¼±ÅÃÇÏ¼¼¿ä.");
+                Debug.Log("ë‹¨ì¼ íƒ€ê²Ÿ ì¹´ë“œê°€ ì„ íƒë˜ì—ˆìŠµë‹ˆë‹¤. ì ì„ ì„ íƒí•˜ì„¸ìš”.");
             }
         }
     }
 
-    // ÀÌ¹ø ÅÏ¿¡ ¼±ÅÃµÈ Ä«µå¸¦ Ãë¼ÒÇÏ°í ÇÚµå·Î µÇµ¹¸²
+    // ì´ë²ˆ í„´ì— ì„ íƒëœ ì¹´ë“œë¥¼ ì·¨ì†Œí•˜ê³  í•¸ë“œë¡œ ë˜ëŒë¦¼
     public void CancelCardSelection(CardBehaviour card)
     {
         if (useList.Contains(card))
         {
             useList.Remove(card);
             hand.Add(card);
-            Debug.Log(card.Card.CardName + " Ä«µå ¼±ÅÃÀÌ Ãë¼ÒµÇ¾ú½À´Ï´Ù.");
+            Debug.Log(card.Card.CardName + " ì¹´ë“œ ì„ íƒì´ ì·¨ì†Œë˜ì—ˆìŠµë‹ˆë‹¤.");
         }
     }
 
-    // ÅÏ Á¾·á ¹öÆ° UI ÀÌº¥Æ®·Î È£Ãâ(ÇÃ·¹ÀÌ¾î ÅÏ Á¾·áÇÏ¸é¼­ Ä«µå »ç¿ë)
+    // í„´ ì¢…ë£Œ ë²„íŠ¼ UI ì´ë²¤íŠ¸ë¡œ í˜¸ì¶œ(í”Œë ˆì´ì–´ í„´ ì¢…ë£Œí•˜ë©´ì„œ ì¹´ë“œ ì‚¬ìš©)
     public void EndPlayerTurn()
     {
         if (!isPlayerTurn)
@@ -153,14 +157,14 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("ÇÃ·¹ÀÌ¾îÀÇ ÅÏ Á¾·á. ¼±ÅÃµÈ Ä«µå¸¦ »ç¿ëÇÕ´Ï´Ù.");
+        Debug.Log("í”Œë ˆì´ì–´ì˜ í„´ ì¢…ë£Œ. ì„ íƒëœ ì¹´ë“œë¥¼ ì‚¬ìš©í•©ë‹ˆë‹¤.");
         foreach (var card in useList)
         {
-            // ÀûÀ» ¼±ÅÃÇÏÁö ¾Ê¾ÒÀ» ¶§ ¼±ÅÃÇÒ ¶§±îÁö ±â´Ù¸®µµ·Ï Ãß°¡ ±¸Çö ÇÊ¿ä
+            // ì ì„ ì„ íƒí•˜ì§€ ì•Šì•˜ì„ ë•Œ ì„ íƒí•  ë•Œê¹Œì§€ ê¸°ë‹¤ë¦¬ë„ë¡ ì¶”ê°€ êµ¬í˜„ í•„ìš”
             if (card.Card.TargetingType == TargetingType.Single && selectedEnemy == null)
             {
-                Debug.Log("´ÜÀÏ Å¸°Ù Ä«µå´Â ÀûÀ» ¼±ÅÃÇØ¾ß ÇÕ´Ï´Ù.");
-                return; // ÀûÀÌ ¼±ÅÃµÇÁö ¾Ê¾Ò´Ù¸é ÇÔ¼ö Á¾·á
+                Debug.Log("ë‹¨ì¼ íƒ€ê²Ÿ ì¹´ë“œëŠ” ì ì„ ì„ íƒí•´ì•¼ í•©ë‹ˆë‹¤.");
+                return; // ì ì´ ì„ íƒë˜ì§€ ì•Šì•˜ë‹¤ë©´ í•¨ìˆ˜ ì¢…ë£Œ
             }
 
             PlayCard(card);
@@ -169,6 +173,7 @@ public class BattleManager : MonoBehaviour
         useList.Clear();
         PlayerController.Instance.EndTurn();
         EnemyTurn();
+        OnTurnPassed?.Invoke();
     }
 
     public bool IsCardInUseList(CardBehaviour card)
@@ -183,7 +188,7 @@ public class BattleManager : MonoBehaviour
         switch (card.Card.TargetingType)
         {
             case TargetingType.Single:
-                // ´ÜÀÏ Å¸°Ù: ÇÃ·¹ÀÌ¾î°¡ Æ¯Á¤ ÀûÀ» ¼±ÅÃÇØ¾ß ÇÔ
+                // ë‹¨ì¼ íƒ€ê²Ÿ: í”Œë ˆì´ì–´ê°€ íŠ¹ì • ì ì„ ì„ íƒí•´ì•¼ í•¨
                 if (selectedEnemy != null)
                 {
                     targets.Add(selectedEnemy.gameObject);
@@ -191,55 +196,37 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("ÀûÀ» ¼±ÅÃÇØ¾ß ÇÕ´Ï´Ù.");
+                    Debug.Log("ì ì„ ì„ íƒí•´ì•¼ í•©ë‹ˆë‹¤.");
                     return;
                 }
                 break;
-
-            case TargetingType.Multiple:
-                // ´ÙÁß Å¸°Ù: maxTargetCount ¸¸Å­ÀÇ ÀûÀ» ·£´ıÇÏ°Ô Å¸°ÙÆÃ
-                int maxTargets = Mathf.Min(card.Card.MaxTargetCount, Enemy.Count);
-                int randomTargetCount = Random.Range(1, maxTargets + 1);
-
-                List<int> selectedIndices = new List<int>();
-                while (selectedIndices.Count < randomTargetCount)
-                {
-                    int randomIndex = Random.Range(0, Enemy.Count);
-                    if (!selectedIndices.Contains(randomIndex))
-                    {
-                        selectedIndices.Add(randomIndex);
-                        targets.Add(Enemy[randomIndex].gameObject);
-                    }
-                }
-                break;
-
             default:
-                Debug.LogWarning("¾Ë ¼ö ¾ø´Â Å¸°ÙÆÃ Å¸ÀÔÀÔ´Ï´Ù.");
+                Debug.LogWarning("ì•Œ ìˆ˜ ì—†ëŠ” íƒ€ê²ŸíŒ… íƒ€ì…ì…ë‹ˆë‹¤.");
                 return;
         }
 
         card.Use(targets.ToArray());
 
         discardDeck.Add(card);
-        Debug.Log(card.Card.CardName + " Ä«µå¸¦ »ç¿ëÇß½À´Ï´Ù.");
+        Debug.Log(card.Card.CardName + " ì¹´ë“œë¥¼ ì‚¬ìš©í–ˆìŠµë‹ˆë‹¤.");
     }
 
     public void ShuffleDiscardToDeck()
     {
-        // discardDeckÀÇ ¸ğµç Ä«µå¸¦ drawDeckÀ¸·Î ÀÌµ¿
+        // discardDeckì˜ ëª¨ë“  ì¹´ë“œë¥¼ drawDeckìœ¼ë¡œ ì´ë™
         foreach (var card in discardDeck)
         {
             CardManager.Instance.AddCardToDeck(card);
         }
         discardDeck.Clear();
 
-        Debug.Log("discardDeckÀÇ ¸ğµç Ä«µå¸¦ drawDeckÀ¸·Î ¼¯¾ú½À´Ï´Ù.");
+        Debug.Log("discardDeckì˜ ëª¨ë“  ì¹´ë“œë¥¼ drawDeckìœ¼ë¡œ ì„ì—ˆìŠµë‹ˆë‹¤.");
     }
 
     private void EnemyTurn()
     {
         isPlayerTurn = false;
-        Debug.Log("ÀûÀÇ ÅÏÀÔ´Ï´Ù.");
+        Debug.Log("ì ì˜ í„´ì…ë‹ˆë‹¤.");
         
         EnemyActive(Enemy);
         PlayerTurn();
@@ -249,7 +236,7 @@ public class BattleManager : MonoBehaviour
     {
         foreach(var e in enemy)
         {
-            e.Playpattern(e);
+            e.PlayPattern(e);
         }
     }
 }

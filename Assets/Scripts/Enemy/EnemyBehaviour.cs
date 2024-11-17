@@ -2,48 +2,72 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    [SerializeField] private BaseEnemy enemyData; // Àû ¿ÀºêÁ§Æ® µ¥ÀÌÅÍ ÂüÁ¶
+    [SerializeField] private BaseEnemy enemyData; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-    private int hp;
+    public int HP { get; private set; }
 
     private string enemyName;
     public string EnemyName => enemyName;
 
-    private void Awake()
+    // ê³µê²©, í”¼í•´, íì— ê³±í•˜ëŠ” ê³„ìˆ˜ (ê¸°ë³¸ê°’ 100%)
+    private int attackMultiplier = 100;
+
+    public int AttackMultiplier
     {
-        hp = enemyData.MaxHp;
-        enemyName = enemyData.EnemyName;
+        get => attackMultiplier;
+        set
+        {
+            attackMultiplier = value;
+            Debug.Log("í”Œë ˆì´ì–´ì˜ ê³µê²© íš¨ê³¼ ê³„ìˆ˜ê°€ " + attackMultiplier + "%ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
+        }
     }
 
-    public int GetHp()
+    private int healMultiplier = 100;
+
+    public int HealMultiplier
     {
-        return hp;
+        get => healMultiplier;
+        set
+        {
+            healMultiplier = value;
+            Debug.Log("í”Œë ˆì´ì–´ì˜ ê³µê²© íš¨ê³¼ ê³„ìˆ˜ê°€ " + healMultiplier + "%ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
+        }
+    }
+
+    private int takeMultiplier = 100;
+
+    public int TakeMultiplier
+    {
+        get => takeMultiplier;
+        set
+        {
+            takeMultiplier = value;
+            Debug.Log("í”Œë ˆì´ì–´ì˜ ê³µê²© íš¨ê³¼ ê³„ìˆ˜ê°€ " + takeMultiplier + "%ë¡œ ì„¤ì •ë˜ì—ˆìŠµë‹ˆë‹¤.");
+        }
+    }
+
+    private void Awake()
+    {
+        HP = enemyData.MaxHp;
+        enemyName = enemyData.EnemyName;
     }
 
     public void TakeDamage(int damage)
     {
-        hp -= damage;
-        Debug.Log($"{enemyData.EnemyName}ÀÌ(°¡) {damage}ÀÇ ÇÇÇØ¸¦ ÀÔ¾ú½À´Ï´Ù. ³²Àº Ã¼·Â: {hp}");
+        HP -= damage;
+        Debug.Log($"{enemyData.EnemyName} {damage} í”¼í•´ ì…ìŒ, ë‚¨ì€ HP: {HP}");
     }
 
     public void Heal(int heal)
     {
-        hp += heal;
-        Debug.Log($"{enemyData.EnemyName}ÀÌ(°¡) {heal}¸¸Å­ Ã¤·ÂÀ» È¸º¹ÇÕ´Ï´Ù. ³²Àº Ã¼·Â: {hp}");
+        HP += heal;
+        Debug.Log($"{enemyData.EnemyName} {heal} íšŒë³µ, ë‚¨ì€ HP: {HP}");
     }
 
     public bool IsDead()
-    {
-        if (hp <= 0)
-        {
-            Debug.Log($"{enemyData.EnemyName}ÀÌ(°¡) »ç¸ÁÇß½À´Ï´Ù.");
-            Destroy(gameObject);
-            return true;
-        }
-        else return false;
-    }
+        => HP <= 0;
 
-    public void Playpattern(EnemyBehaviour enemy)
+    public void PlayPattern(EnemyBehaviour enemy)
     {
         enemyData.ActivatePattern(enemy);
     }

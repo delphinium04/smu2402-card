@@ -9,8 +9,7 @@ namespace CardAsset
     [CreateAssetMenu(fileName = "Swordman", menuName = "Card/Special/Swordman")]
     public class CardSpecialSwordman : BaseCard
     {
-        [Header("Swordman Variables")]
-        private const int Damage = 25;
+        [Header("Swordman Variables")] private const int Damage = 25;
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)
@@ -23,12 +22,12 @@ namespace CardAsset
 
             int damage = isUpgraded ? Damage * 2 : Damage;
 
-            if (GetComponent(targets[0], out BaseEnemy enemy))
+            if (GetComponent(targets[0], out EnemyBehaviour enemy))
                 enemy.TakeDamage(damage);
 
             if (isUpgraded)
                 return;
-            PlayerController p = FindObjectOfType<PlayerController>();
+            PlayerController p = PlayerController.Instance;
             p.TakeDamage(damage);
         }
     }

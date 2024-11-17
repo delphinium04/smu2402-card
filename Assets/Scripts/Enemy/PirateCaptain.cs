@@ -9,15 +9,15 @@ public class PirateCaptain : BaseEnemy
     {
         turnCount++;
 
-        // 2È¸ °ø°Ý
+        // 2íšŒ ê³µê²©
         for (int i = 0; i < 2; i++)
         {
             PlayerController.Instance.TakeDamage(Damage);
-            // °¢ °ø°Ý¸¶´Ù 25% È®·ü·Î µð¹öÇÁ ºÎ¿©
+            // ê° ê³µê²©ë§ˆë‹¤ 25% í™•ë¥ ë¡œ ë””ë²„í”„ ë¶€ì—¬
             ApplyDebuffToPlayer();
         }
 
-        // 2ÅÏ¸¶´Ù ÀÚ½Å¿¡°Ô °É¸° µð¹öÇÁ 1°³ ÇØÁ¦
+        // 2í„´ë§ˆë‹¤ ìžì‹ ì—ê²Œ ê±¸ë¦° ë””ë²„í”„ 1ê°œ í•´ì œ
         if (turnCount % 2 == 0)
         {
             RemoveRandomDebuff();
@@ -27,24 +27,24 @@ public class PirateCaptain : BaseEnemy
     private void ApplyDebuffToPlayer()
     {
         float chance = Random.Range(0f, 1f);
-        if (chance <= 0.25f) // 25% È®·ü·Î µð¹öÇÁ ºÎ¿©
+        if (chance <= 0.25f) // 25% í™•ë¥ ë¡œ ë””ë²„í”„ ë¶€ì—¬
         {
-            int debuffType = Random.Range(0, 3); // 0: ¾àÈ­, 1: Ä§¹¬, 2: ¼Ó¹Ú
+            int debuffType = Random.Range(0, 3); // 0: ì•½í™”, 1: ì¹¨ë¬µ, 2: ì†ë°•
 
             switch (debuffType)
             {
                 case 0:
-                    PlayerController.Instance.SetAttackEffectMultiplier(75);
-                    Debug.Log("ÇÃ·¹ÀÌ¾î¿¡°Ô ¾àÈ­ µð¹öÇÁ¸¦ ºÎ¿©Çß½À´Ï´Ù. ÁÖ´Â µ¥¹ÌÁö 25% °¨¼Ò");
+                    PlayerController.Instance.AttackMultiplier -= 25;
+                    Debug.Log("í”Œë ˆì´ì–´ì—ê²Œ ì•½í™” ë””ë²„í”„ë¥¼ ë¶€ì—¬í–ˆìŠµë‹ˆë‹¤. ì£¼ëŠ” ë°ë¯¸ì§€ 25% ê°ì†Œ");
                     break;
                 case 1:
-                    PlayerController.Instance.SetCanSelectSkillCard(false);
-                    PlayerController.Instance.SetCanSelectSpecialCard(false);
-                    Debug.Log("ÇÃ·¹ÀÌ¾î¿¡°Ô Ä§¹¬ µð¹öÇÁ¸¦ ºÎ¿©Çß½À´Ï´Ù. ½ºÅ³Ä«µå ¹× Æ¯¼öÄ«µå »ç¿ë ºÒ°¡");
+                    PlayerController.Instance.canSelectSkillCard = false;
+                    PlayerController.Instance.canSelectSpecialCard = false;
+                    Debug.Log("í”Œë ˆì´ì–´ì—ê²Œ ì¹¨ë¬µ ë””ë²„í”„ë¥¼ ë¶€ì—¬í–ˆìŠµë‹ˆë‹¤. ìŠ¤í‚¬ì¹´ë“œ ë° íŠ¹ìˆ˜ì¹´ë“œ ì‚¬ìš© ë¶ˆê°€");
                     break;
                 case 2:
-                    PlayerController.Instance.SetCanSelectNormalCard(false);
-                    Debug.Log("ÇÃ·¹ÀÌ¾î¿¡°Ô ¼Ó¹Ú µð¹öÇÁ¸¦ ºÎ¿©Çß½À´Ï´Ù. ÀÏ¹Ý Ä«µå »ç¿ë ºÒ°¡");
+                    PlayerController.Instance.canSelectNormalCard = false;
+                    Debug.Log("í”Œë ˆì´ì–´ì—ê²Œ ì†ë°• ë””ë²„í”„ë¥¼ ë¶€ì—¬í–ˆìŠµë‹ˆë‹¤. ì¼ë°˜ ì¹´ë“œ ì‚¬ìš© ë¶ˆê°€");
                     break;
             }
         }
@@ -52,32 +52,32 @@ public class PirateCaptain : BaseEnemy
 
     private void RemoveRandomDebuff()
     {
-        // µð¹öÇÁ°¡ ÀÖ´ÂÁö È®ÀÎÇÏ°í, ·£´ýÇÏ°Ô ÇÏ³ª¸¦ Á¦°Å
+        // ë””ë²„í”„ê°€ ìžˆëŠ”ì§€ í™•ì¸í•˜ê³ , ëžœë¤í•˜ê²Œ í•˜ë‚˜ë¥¼ ì œê±°
         if (HasDebuff())
         {
             int debuffToRemove = Random.Range(0, GetDebuffCount());
             RemoveDebuffByIndex(debuffToRemove);
-            Debug.Log("ÀÚ½Å¿¡°Ô °É¸° µð¹öÇÁ Áß ÇÏ³ª¸¦ ÇØÁ¦Çß½À´Ï´Ù.");
+            Debug.Log("ìžì‹ ì—ê²Œ ê±¸ë¦° ë””ë²„í”„ ì¤‘ í•˜ë‚˜ë¥¼ í•´ì œí–ˆìŠµë‹ˆë‹¤.");
         }
     }
 
     private bool HasDebuff()
     {
-        // ÀûÀÌ °É¸° µð¹öÇÁ°¡ ÀÖ´ÂÁö ¿©ºÎ¸¦ È®ÀÎÇÏ´Â ÇÔ¼ö
-        // ·ÎÁ÷ ±¸Çö ÇÊ¿ä (ÇöÀç µð¹öÇÁ »óÅÂµéÀ» °ü¸®ÇÏ´Â ¹æ½Ä¿¡ µû¶ó ´Þ¶óÁü)
-        return true; // ¿¹½Ã·Î Ç×»ó µð¹öÇÁ°¡ ÀÖ´Ù°í °¡Á¤
+        // ì ì´ ê±¸ë¦° ë””ë²„í”„ê°€ ìžˆëŠ”ì§€ ì—¬ë¶€ë¥¼ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
+        // ë¡œì§ êµ¬í˜„ í•„ìš” (í˜„ìž¬ ë””ë²„í”„ ìƒíƒœë“¤ì„ ê´€ë¦¬í•˜ëŠ” ë°©ì‹ì— ë”°ë¼ ë‹¬ë¼ì§)
+        return true; // ì˜ˆì‹œë¡œ í•­ìƒ ë””ë²„í”„ê°€ ìžˆë‹¤ê³  ê°€ì •
     }
 
     private int GetDebuffCount()
     {
-        // ÇöÀç °É·Á ÀÖ´Â µð¹öÇÁÀÇ °³¼ö¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
-        // ÀÌ ·ÎÁ÷ ±¸Çö ÇÊ¿ä
-        return 3; // ¿¹½Ã·Î 3°³ÀÇ µð¹öÇÁ°¡ ÀÖ´Ù°í °¡Á¤
+        // í˜„ìž¬ ê±¸ë ¤ ìžˆëŠ” ë””ë²„í”„ì˜ ê°œìˆ˜ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
+        // ì´ ë¡œì§ êµ¬í˜„ í•„ìš”
+        return 3; // ì˜ˆì‹œë¡œ 3ê°œì˜ ë””ë²„í”„ê°€ ìžˆë‹¤ê³  ê°€ì •
     }
 
     private void RemoveDebuffByIndex(int index)
     {
-        // Æ¯Á¤ ÀÎµ¦½ºÀÇ µð¹öÇÁ¸¦ ÇØÁ¦ÇÏ´Â ÇÔ¼ö
-        // ÀÌ ·ÎÁ÷ ±¸Çö ÇÊ¿ä (µð¹öÇÁ ±¸Çö ¿Ï·áµÇ¸é ±¸Çö °¡´É)¤¤
+        // íŠ¹ì • ì¸ë±ìŠ¤ì˜ ë””ë²„í”„ë¥¼ í•´ì œí•˜ëŠ” í•¨ìˆ˜
+        // ì´ ë¡œì§ êµ¬í˜„ í•„ìš” (ë””ë²„í”„ êµ¬í˜„ ì™„ë£Œë˜ë©´ êµ¬í˜„ ê°€ëŠ¥)ã„´
     }
 }
