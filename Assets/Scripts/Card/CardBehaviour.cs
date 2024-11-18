@@ -8,13 +8,6 @@ namespace Card
 {
     public class CardBehaviour : MonoBehaviour
     {
-        [SerializeField]
-        private SpriteRenderer cardImage;
-        [SerializeField]
-        private TMP_Text cardDescription;
-        [SerializeField]
-        private TMP_Text cardName;
-        
         public BaseCard Card { get; private set; }
 
         private void Awake()
@@ -25,13 +18,9 @@ namespace Card
         // 카드 첫 세팅, CardManager에서 사용
         public void Init(BaseCard c)
         {
-            if (Card != null) return;
+            if (Card is not null) return;
             Card = c;
             name = Card.CardName;
-
-            cardImage.sprite = Card.Image;
-            cardDescription.text = Card.Description;
-            cardName.text = Card.CardName;
         }
 
         
