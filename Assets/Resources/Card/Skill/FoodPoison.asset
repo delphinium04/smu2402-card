@@ -13,11 +13,8 @@ MonoBehaviour:
   m_Name: FoodPoison
   m_EditorClassIdentifier: 
   cardName: "\uC2DD\uC911\uB3C5"
-  image: {fileID: 0}
-  description: "\uC0C1\uB300\uBC29 1\uBA85\uC758 \uBC84\uD504 \uC911 \uBB34\uC791\uC704
-    1\uAC1C\uB97C(\uAC15\uD654 \uC2DC 2\uAC1C\uB97C) \uC81C\uAC70\uD569\uB2C8\uB2E4"
+  image: {fileID: 21300000, guid: 750d03783ca538442896d7eb161d25d5, type: 3}
   cardType: 1
   targetingType: 0
-  maxTargetCount: 0
-  effect: {fileID: 0}
+  upgradedImage: {fileID: 21300000, guid: 83a591a28d3a88041a309bc43e1fad89, type: 3}
   isUpgraded: 0

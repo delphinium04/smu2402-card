@@ -13,6 +13,7 @@ namespace CardAsset
         [Header("Seasickness Variables")]
         [SerializeField]
         private BaseEffect effect;
+        public Sprite upgradedImage;
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)

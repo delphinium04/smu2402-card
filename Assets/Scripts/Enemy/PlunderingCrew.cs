@@ -1,12 +1,14 @@
+using Entity;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlunderingCrew", menuName = "Enemy/PlunderingCrew")]
-public class PlunderingCrew : BaseEnemy
+namespace Enemy
 {
-    public override void ActivatePattern(EnemyBehaviour enemy)
+    public class PlunderingCrew : BaseEnemy
     {
-        PlayerController.Instance.TakeDamage(Damage);
-
-        PlayerController.Instance.DecreaseGold(10);
+        public override void ActivatePattern()
+        {
+            PlayerController.Instance.TakeDamage(Atk);
+            PlayerController.Instance.DecreaseGold(10);
+        }
     }
 }

@@ -12,12 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7b4124366a4aeb89cc5ba610af32d3, type: 3}
   m_Name: Blade
   m_EditorClassIdentifier: 
-  cardAssetType: 4
   cardName: "\uCE7C\uB0A0 \uAC08\uAE30"
-  image: {fileID: 0}
-  description: "1\uD134(\uAC15\uD654 2\uD134) \uB3D9\uC548 \uBD84\uB178\uB97C \uC5BB\uC2B5\uB2C8\uB2E4."
+  image: {fileID: 21300000, guid: 91916220e3a617f4bb89c4e8b25c7fde, type: 3}
   cardType: 1
   targetingType: 0
-  maxTargetCount: 0
   effect: {fileID: 11400000, guid: 16597f35ba8a08d4f8f6e349cc83896f, type: 2}
+  upgradedImage: {fileID: 21300000, guid: 80a62eb90197c0140a1b83f434d33374, type: 3}
   isUpgraded: 0

@@ -8,8 +8,10 @@ namespace CardAsset
     [CreateAssetMenu(fileName = "FoodPoison", menuName = "Card/Skill/FoodPoison")]
     public class CardSkillFoodPoison : BaseCard
     {
-        [Header("FoodPoison Variables")]
+        [Header("FoodPoison Variables")] 
+        public Sprite upgradedImage;
         public bool isUpgraded = false;
+
 
         public override void Use(params GameObject[] targets)
         {
@@ -27,7 +29,7 @@ namespace CardAsset
 
             effectList = em.GetEffects(EffectManager.Kind.Buff);
             if (!isUpgraded || effectList.Count == 0) return;
-            
+
             em.RemoveEffect(effectList[Random.Range(0, effectList.Count)]);
         }
     }

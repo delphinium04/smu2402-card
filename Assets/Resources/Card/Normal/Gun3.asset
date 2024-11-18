@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c3a36e0dac795449ed677e7773c75f, type: 3}
   m_Name: Gun3
   m_EditorClassIdentifier: 
-  cardAssetType: 0
   cardName: "\uCD1D"
-  image: {fileID: 21300000, guid: d186aa61bfde4704c9eb91511c95a2a5, type: 3}
+  image: {fileID: 21300000, guid: 01067269ccf5c5e4e83154c92a1ae910, type: 3}
   description: Gun3 Description
   cardType: 0
+  targetingType: 2
   cardLevel: 2
-  targetingType: 3
-  maxTargetCount: 3
-  damage: 3
   hasExtraDamage: 0

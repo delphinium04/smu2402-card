@@ -1,13 +1,16 @@
+using Entity;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WatchfulSailor", menuName = "Enemy/WatchfulSailor")]
-public class WatchfulSailor : BaseEnemy
+namespace Enemy
 {
-    public override void ActivatePattern(EnemyBehaviour enemy)
+    public class WatchfulSailor : BaseEnemy
     {
-        for (int i = 0; i < 2; i++)
+        public override void ActivatePattern()
         {
-            PlayerController.Instance.TakeDamage(Damage);
+            for (int i = 0; i < 2; i++)
+            {
+                PlayerController.Instance.TakeDamage(Atk);
+            }
         }
     }
 }

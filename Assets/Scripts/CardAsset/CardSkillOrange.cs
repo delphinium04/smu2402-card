@@ -11,9 +11,9 @@ namespace CardAsset
     public class CardSkillOrange : BaseCard
     {
         [Header("Orange Variables")]
-        [SerializeField]
+        public Sprite upgradedImage;
         public bool isUpgraded = false;
-        
+
         public override void Use(params GameObject[] targets)
         {
             PlayerController p = PlayerController.Instance;
@@ -21,14 +21,16 @@ namespace CardAsset
             if (!GetComponent(p.gameObject, out EffectManager em)) return;
 
             var list = em.GetEffects(EffectManager.Kind.Debuff);
-            if(list.Count > 1 && isUpgraded)
+            switch (list.Count)
             {
-                em.RemoveEffect(list[0]);
-                em.RemoveEffect(list[1]);
+                case > 1 when isUpgraded:
+                    em.RemoveEffect(list[0]);
+                    em.RemoveEffect(list[1]);
+                    break;
+                case > 0:
+                    em.RemoveEffect(list[0]);
+                    break;
             }
-            else if (list.Count > 0)
-                em.RemoveEffect(list[0]);
         }
     }
-
 }

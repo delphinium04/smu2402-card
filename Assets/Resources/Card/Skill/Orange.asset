@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: Orange
   m_EditorClassIdentifier: 
   cardName: "\uADE4"
-  image: {fileID: 0}
-  description: "1\uAC1C\uC758(\uAC15\uD654 \uC2DC 2\uAC1C) \uB514\uBC84\uD504\uB97C
-    \uD574\uC81C\uD569\uB2C8\uB2E4"
+  image: {fileID: 21300000, guid: f3222a82a2e614c4191377951a51a204, type: 3}
   cardType: 1
   targetingType: 0
-  maxTargetCount: 0
+  upgradedImage: {fileID: 21300000, guid: bcdb81aff0f760441b012fbb345cf190, type: 3}
   isUpgraded: 0

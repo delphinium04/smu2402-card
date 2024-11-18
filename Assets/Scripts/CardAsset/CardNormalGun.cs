@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Card;
 using Effect;
+using Enemy;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -28,17 +29,18 @@ namespace CardAsset
             if (CardLevel == CardLevel.Two) damage = Damage * 2;
             if (CardLevel == CardLevel.Three) { damage = Damage * 3; enemyCount = EnemyCount + 1; }
             if (hasExtraDamage) damage++;
+
+            damage = (int)(damage * (PlayerController.Instance.AtkMultiplier / 100.0f));
          
-            List<EnemyBehaviour> alreadyList = new List<EnemyBehaviour>();
+            List<BaseEnemy> alreadyList = new List<BaseEnemy>();
             for (int i = 0, index = Random.Range(0, targets.Length); i < enemyCount; i++, index = Random.Range(0, targets.Length))
             {
-                if(GetComponent(targets[index], out EnemyBehaviour enemy)) enemy.TakeDamage(damage);
-                if (CardLevel == CardLevel.Three && !alreadyList.Contains(enemy))
-                {
-                    if(GetComponent(enemy.gameObject, out EffectManager em))
-                        em.AddEffectTurn(EffectManager.Kind.Debuff, 1, false);
-                    alreadyList.Add(enemy);
-                }
+                if(GetComponent(targets[index], out BaseEnemy enemy)) enemy.TakeDamage(damage);
+                if (CardLevel != CardLevel.Three || alreadyList.Contains(enemy)) continue;
+                
+                if(GetComponent(enemy.gameObject, out EffectManager em))
+                    em.AddEffectTurn(EffectManager.Kind.Debuff, 1, false);
+                alreadyList.Add(enemy);
             }
         }
     }

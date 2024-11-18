@@ -12,13 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eec497db75c44479775a15557a773ab, type: 3}
   m_Name: Sword3
   m_EditorClassIdentifier: 
-  cardAssetType: 0
   cardName: "\uCE7C"
-  image: {fileID: 0}
+  image: {fileID: 21300000, guid: b3ab494a7d6e4a74fbd65defcdd070ef, type: 3}
   description: Sword3 desc
   cardType: 0
-  cardLevel: 2
   targetingType: 1
-  maxTargetCount: 1
-  defaultDamage: 5
+  cardLevel: 2
   hasExtraDamage: 0

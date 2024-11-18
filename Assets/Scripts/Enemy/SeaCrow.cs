@@ -1,10 +1,13 @@
+using Entity;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SeaCrow", menuName = "Enemy/SeaCrow")]
-public class SeaCrow : BaseEnemy
+namespace Enemy
 {
-    public override void ActivatePattern(EnemyBehaviour enemy)
+    public class SeaCrow : BaseEnemy
     {
-        PlayerController.Instance.TakeDamage(Damage);
+        public override void ActivatePattern()
+        {        
+            PlayerController.Instance.TakeDamage(Atk);
+        }
     }
 }

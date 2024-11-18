@@ -1,14 +1,17 @@
 ﻿using System.Linq;
 using Card;
+using Enemy;
+using Entity;
 using UnityEngine;
 
 namespace CardAsset
 {
     [CreateAssetMenu(fileName = "BeerParty", menuName = "Card/Special/BeerParty")]
-    public class CardSpecialBeerParty : BaseCard
+    public class CardSpeicalBeerParty : BaseCard
     {
-        [Header("BeerParty Variables")]
+        [Header("BeerParty Variables")] 
         private const int HealAmount = 15;
+        public Sprite upgradedImage;
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)
@@ -22,18 +25,17 @@ namespace CardAsset
             PlayerController p = PlayerController.Instance;
             if (isUpgraded)
             {
-                // p.heal(HealAmount * 2);
+                p.Heal(HealAmount * 2);
                 return;
             }
 
-            // p.heal(HealAmount);
+            p.Heal(HealAmount);
             targets.ToList().ForEach(target =>
             {
                 if (GetComponent(target, out BaseEnemy enemy))
                     return;
-                // enemy.heal(HealAmount)
+                enemy.Heal(HealAmount);
             });
-
         }
     }
 }

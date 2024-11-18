@@ -2,6 +2,7 @@
 using System.Linq;
 using Card;
 using Effect;
+using Enemy;
 using UnityEngine;
 
 namespace CardAsset
@@ -11,6 +12,8 @@ namespace CardAsset
     {
         [Header("Sniper Variables")]
         private const int Damage = 2;
+        public Sprite upgradedImage;
+
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)
@@ -22,11 +25,12 @@ namespace CardAsset
             }
 
             var damage = isUpgraded ? Damage + 3 : Damage;
+            damage = (int)(damage * PlayerController.Instance.AtkMultiplier / 100.0f);
 
             for (int i = 0; i < 5; i++)
             {
                 int randomIndex = Random.Range(0, targets.Length);
-                if (GetComponent(targets[randomIndex], out EnemyBehaviour enemy))
+                if (GetComponent(targets[randomIndex], out BaseEnemy enemy))
                     enemy.TakeDamage(damage);
             }
         }

@@ -1,5 +1,6 @@
 using System.Collections;
 using Effect;
+using Entity;
 using UnityEngine;
 
 namespace EffectAsset
@@ -9,30 +10,17 @@ namespace EffectAsset
     {
         protected override void Apply()
         {
-            if (Target.TryGetComponent(out PlayerController player))
-            {
-                player.TakeMultiplier += 50;
-            }
-            else if (Target.TryGetComponent(out EnemyBehaviour enemy))
-            {
-                enemy.TakeMultiplier += 50;
-            }
-            else Debug.LogError($"{GetType().Name}: No EnemyBehaviour or PlayerController in {Target.name}");
+            if (GetComponent(Target.gameObject, out AbstractEntity entity))
+                entity.TakeMultiplier += 50;
         }
 
         public sealed override void Remove()
         {
             if (TurnIgnored > 0) return; // 이미 Remove() 되어있는 상황
             
-            if (Target.TryGetComponent(out PlayerController player))
-            {
-                player.TakeMultiplier -= 50;
-            }
-            else if (Target.TryGetComponent(out EnemyBehaviour enemy))
-            {               
-                enemy.TakeMultiplier -= 50;
-            }
-            else Debug.LogError($"{GetType().Name}: No EnemyBehaviour or PlayerController in {Target.name}");
+            if (Target.TryGetComponent(out AbstractEntity entity))
+                entity.TakeMultiplier -= 50;
+            else Debug.LogError($"{GetType().Name}: No AbstractEntity in {Target.name}");
         }
     }
 }

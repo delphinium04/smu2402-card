@@ -1,10 +1,13 @@
+using Entity;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Cleaner", menuName = "Enemy/Cleaner")]
-public class Cleaner : BaseEnemy
+namespace Enemy
 {
-    public override void ActivatePattern(EnemyBehaviour enemy)
+    public class Cleaner : BaseEnemy
     {
-        PlayerController.Instance.TakeDamage(Damage);
+        public override void ActivatePattern()
+        {
+            PlayerController.Instance.TakeDamage(Atk);
+        }
     }
 }  

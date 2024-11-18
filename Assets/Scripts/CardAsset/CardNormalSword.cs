@@ -1,4 +1,6 @@
 ﻿using Card;
+using Enemy;
+using Entity;
 using UnityEngine;
 
 namespace CardAsset
@@ -25,7 +27,9 @@ namespace CardAsset
             }
             if (hasExtraDamage) damageValue++;
             
-            if(GetComponent(targets[0], out EnemyBehaviour enemy))
+            damageValue = (int)(damageValue * (PlayerController.Instance.AtkMultiplier / 100.0f));
+            
+            if(GetComponent(targets[0], out BaseEnemy enemy))
                 enemy.TakeDamage(damageValue);
         }
     }

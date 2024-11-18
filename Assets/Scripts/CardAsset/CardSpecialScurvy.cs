@@ -2,6 +2,7 @@
 using System.Linq;
 using Card;
 using Effect;
+using Enemy;
 using UnityEngine;
 
 namespace CardAsset
@@ -10,6 +11,8 @@ namespace CardAsset
     public class CardSpecialScurvy : BaseCard
     {
         [Header("Scurvy Variables")] private const int Damage = 10;
+        public Sprite upgradedImage;
+
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)
@@ -23,7 +26,7 @@ namespace CardAsset
             int damage = isUpgraded ? Damage * 2 : Damage;
             targets.ToList().ForEach(target =>
             {
-                if (GetComponent(target, out EnemyBehaviour enemy)) enemy.TakeDamage(damage);
+                if (GetComponent(target, out BaseEnemy enemy)) enemy.TakeDamage(damage);
             });
 
             PlayerController p = PlayerController.Instance;

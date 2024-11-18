@@ -1,28 +1,28 @@
+﻿using System;
+using Entity;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewEnemy", menuName = "Enemy/BaseEnemy")]
-public class BaseEnemy : ScriptableObject
+namespace Enemy
 {
-    [SerializeField] private string enemyName;
-    public string EnemyName => enemyName;
-
-    [SerializeField] private int maxHp;
-    public int MaxHp => maxHp;
-
-    [SerializeField] private int damage;
-    public int Damage => damage;
-
-    [SerializeField] private int weight;
-    public int Weight => weight;
-
-    [SerializeField] private Sprite enemyImage;
-    public Sprite EnemyImage => enemyImage;
-
-    [SerializeField][TextArea] private string description;
-    public string Description => description;
-
-    public virtual void ActivatePattern(EnemyBehaviour enemy)
+    [RequireComponent(typeof(SpriteRenderer))]
+    public class BaseEnemy: AbstractEntity
     {
-        return;
+        public Action<BaseEnemy> OnDeath;
+
+        public int Weight { get; protected set; }
+        public override void Init(EntityData _data)
+        {
+            base.Init(_data);
+            Weight = _data.Weight;
+        }
+
+        public override void TakeDamage(int damage)
+        {
+            base.TakeDamage(damage);
+            
+            if(Hp <= 0) OnDeath?.Invoke(this);
+        }
+
+        public virtual extern void ActivatePattern();
     }
 }

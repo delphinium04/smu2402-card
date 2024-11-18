@@ -2,6 +2,7 @@
 using System.Linq;
 using Card;
 using Effect;
+using Enemy;
 using UnityEngine;
 
 namespace CardAsset
@@ -10,6 +11,7 @@ namespace CardAsset
     public class CardSpecialSwordman : BaseCard
     {
         [Header("Swordman Variables")] private const int Damage = 25;
+        public Sprite upgradedImage;
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)
@@ -22,7 +24,7 @@ namespace CardAsset
 
             int damage = isUpgraded ? Damage * 2 : Damage;
 
-            if (GetComponent(targets[0], out EnemyBehaviour enemy))
+            if (GetComponent(targets[0], out BaseEnemy enemy))
                 enemy.TakeDamage(damage);
 
             if (isUpgraded)

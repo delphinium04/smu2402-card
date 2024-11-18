@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: PoisonSword
   m_EditorClassIdentifier: 
   cardName: "\uB3C5\uCE7C"
-  image: {fileID: 0}
-  description: "1\uD134 \uB3D9\uC548(\uAC15\uD654 \uC2DC 2\uD134) \uC0C1\uB300\uBC29
-    1\uBA85\uC774 \uCDE8\uC57D\uC5D0 \uAC78\uB9BD\uB2C8\uB2E4"
+  image: {fileID: 21300000, guid: a42a0fdd69372264fa29ef0d7373fb34, type: 3}
   cardType: 1
   targetingType: 0
-  maxTargetCount: 0
   effect: {fileID: 11400000, guid: d7b28cc96d2195d42944346fa761e383, type: 2}
+  upgradedImage: {fileID: 21300000, guid: 357530c7cbaa557468240a462def40bb, type: 3}
   isUpgraded: 0

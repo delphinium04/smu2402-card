@@ -93,5 +93,13 @@ namespace Effect
         {
             TurnDuration += turn;
         }
+        
+        protected static bool GetComponent<T>(GameObject gameObject, out T component)
+        {
+            if (!gameObject.TryGetComponent(out component))
+                return true;
+            Debug.LogError($"GameObject {gameObject.name} does not have {component.GetType().Name}");
+            return false;
+        }
     }
 }

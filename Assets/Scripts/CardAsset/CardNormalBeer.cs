@@ -31,8 +31,7 @@ namespace CardAsset
                     em.AddEffectTurn(EffectManager.Kind.Buff, 1, false);
             }
             
-            if(hasExtraHeal) healAmount += 2;
-            
+            if(hasExtraHeal) healAmount += 2;            
             p.Heal(healAmount);
         }
     }

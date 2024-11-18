@@ -15,7 +15,7 @@ namespace Effect
     public class EffectManager : MonoBehaviour
     {
         private const int DebuffStartIndexInType = 3; // from BaseEffect.Type
-        private readonly List<BaseEffect> _effects;
+        private readonly List<BaseEffect> _effects = new List<BaseEffect>();
 
         // For Accessory
         public bool HasCross;
@@ -27,9 +27,8 @@ namespace Effect
             All
         };
 
-        private EffectManager()
+        void Start()
         {
-            _effects = new List<BaseEffect>();
             BattleManager.Instance.OnTurnPassed += OnTurnPassed;
         }
 

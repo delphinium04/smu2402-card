@@ -28,13 +28,12 @@ namespace Card
             // 기존 초기화 작업 (_cardPrefab 로드)
             if (_cardPrefab == null)
             {
-                _cardPrefab = Resources.Load<GameObject>("Card/CardPrefab");
+                _cardPrefab = Resources.Load<GameObject>("Prefabs/Card");
             }
-        }
-
-        void Start()
-        {
+            
             // TEST
+            _cardDeck.AddCard(TestCardList.ToArray());
+            _cardDeck.AddCard(TestCardList.ToArray());
             _cardDeck.AddCard(TestCardList.ToArray());
         }
 

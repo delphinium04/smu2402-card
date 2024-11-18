@@ -13,6 +13,7 @@ namespace CardAsset
         private BaseEffect effect1;
         [SerializeField]
         private BaseEffect effect2;
+        public Sprite upgradedImage;
         public bool isUpgraded = false;
 
         public override void Use(params GameObject[] targets)

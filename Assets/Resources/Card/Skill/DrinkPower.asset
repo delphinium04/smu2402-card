@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: DrinkPower
   m_EditorClassIdentifier: 
   cardName: "\uC220\uC758 \uD798"
-  image: {fileID: 0}
-  description: "1\uD134 \uB3D9\uC548(\uAC15\uD654 \uC2DC 2\uD134) \uCCA0\uAC11\uC744
-    \uC5BB\uC2B5\uB2C8\uB2E4"
+  image: {fileID: 21300000, guid: f1b46f039c28fa04c805e323f72d15c8, type: 3}
   cardType: 1
   targetingType: 0
-  maxTargetCount: 0
   effect: {fileID: 11400000, guid: 81813cfca297cf646bc8a1e42412532e, type: 2}
+  upgradedImage: {fileID: 21300000, guid: b07254fe234f6f34caef2fbee17c0bdb, type: 3}
   isUpgraded: 0

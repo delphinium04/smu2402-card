@@ -13,11 +13,8 @@ MonoBehaviour:
   m_Name: BeerParty
   m_EditorClassIdentifier: 
   cardName: "\uB9E5\uC8FC \uD30C\uD2F0"
-  image: {fileID: 0}
-  description: "\uD50C\uB808\uC774\uC5B4\uC640 \uC801 \uBAA8\uB450\uC5D0\uAC8C 10\uC758
-    \uCCB4\uB825\uC744 \uD68C\uBCF5\uD569\uB2C8\uB2E4 (\uC560\uC8FC\uAC00 \uC18C\uC9C0
-    \uC2DC \uD50C\uB808\uC774\uC5B4\uB9CC 30 \uD68C\uBCF5)"
+  image: {fileID: 21300000, guid: c91227e776ac62c4a92a0a6d30b727d9, type: 3}
   cardType: 2
-  targetingType: 3
-  maxTargetCount: 0
+  targetingType: 2
+  upgradedImage: {fileID: 21300000, guid: 51cea9efa12f0454c8afbbca43982b1d, type: 3}
   isUpgraded: 0

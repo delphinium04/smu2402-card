@@ -1,21 +1,24 @@
+using Entity;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PirateLieutenant", menuName = "Enemy/PirateLieutenant")]
-public class PirateLieutenant : BaseEnemy
+namespace Enemy
 {
-    private bool IsHeal = false;
-    public override void ActivatePattern(EnemyBehaviour enemy)
+    public class PirateLieutenant : BaseEnemy
     {
-        PlayerController.Instance.TakeDamage(Damage);
-
-        if (Random.value <= 0.5f) // 50% Ȯ��
+        private bool IsHeal = false;
+ 
+        public override void ActivatePattern()
         {
-            PlayerController.Instance.TakeMultiplier += 50;
-        }
+            PlayerController.Instance.TakeDamage(Atk);
 
-        if (enemy.HP <= 30 && !IsHeal)
-        {
-            enemy.Heal(30);
+            if (Random.value <= 0.5f)
+            {
+                // PlayerController.Instance.TakeMultiplier += 50;
+                // 취약 부여
+            }
+
+            if (Hp > 30 || IsHeal) return;
+            Heal(30);
             IsHeal = true;
         }
     }

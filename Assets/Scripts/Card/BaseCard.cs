@@ -17,11 +17,6 @@ namespace Card
         public Sprite Image => image;
 
         [SerializeField]
-        [TextArea]
-        private string description;
-        public string Description => description;
-
-        [SerializeField]
         private CardType cardType;
         public CardType CardType => cardType;
        
