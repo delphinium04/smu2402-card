@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Card;
 using Effect;
+using Enemy;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -16,14 +17,8 @@ namespace CardAsset
         public Sprite upgradedImage;
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
-            if (targets.Length == 0)
-            {
-                Debug.LogError($"{CardName}: No target");
-                return;
-            }
-
             if (effect == null)
             {
                 Debug.LogError($"{CardName}: Effect resource is not found!");

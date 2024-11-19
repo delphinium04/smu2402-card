@@ -16,9 +16,9 @@
 
     public enum TargetingType
     {
-        None, // 타겟이 필요 없는 경우
-        Single,
-        All
+        None, // 타겟 필요 없음 (예: 플레이어 대상) 
+        Single, // 적 단 한 명 필요
+        All // 랜덤 적용 (적 전체 필요)
     }
 
     public enum CardAssetType

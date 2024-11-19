@@ -18,8 +18,22 @@ namespace Enemy
         public static BaseEnemy GetEnemy(EntityData d)
         {
             GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/BaseEnemy"));
-            go.GetComponent<BaseEnemy>().Init(d);
-            return go.GetComponent<BaseEnemy>();
+
+            BaseEnemy component = d.Type switch
+            {
+                Type.Boatswain => go.AddComponent<Boatswain>(),
+                Type.Cleaner => go.AddComponent<Cleaner>(),
+                Type.CombatSailor => go.AddComponent<CombatSailor>(),
+                Type.PirateCaptain => go.AddComponent<PirateCaptain>(),
+                Type.PirateLieutenant => go.AddComponent<PirateLieutenant>(),
+                Type.PlunderingCrew => go.AddComponent<PlunderingCrew>(),
+                Type.SeaCrow => go.AddComponent<SeaCrow>(),
+                Type.WatchfulSallor => go.AddComponent<WatchfulSailor>(),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            component.Init(d);
+            return component;
         }
 
         void OnDestroy()

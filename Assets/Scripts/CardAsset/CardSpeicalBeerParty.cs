@@ -14,7 +14,7 @@ namespace CardAsset
         public Sprite upgradedImage;
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
             if (targets.Length == 0)
             {
@@ -32,9 +32,7 @@ namespace CardAsset
             p.Heal(HealAmount);
             targets.ToList().ForEach(target =>
             {
-                if (GetComponent(target, out BaseEnemy enemy))
-                    return;
-                enemy.Heal(HealAmount);
+                target.Heal(HealAmount);
             });
         }
     }

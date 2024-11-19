@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Enemy;
+using UnityEngine;
 
 namespace Entity
 {
@@ -27,5 +28,10 @@ namespace Entity
         [SerializeField] [Header("Enemy Only")]
         int _weight;
         public int Weight => _weight;
+
+        [SerializeField]
+        private Type _type;
+        public Type Type => _type;
+
     }
 }

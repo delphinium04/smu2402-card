@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using Card;
+﻿using Card;
 using Effect;
-using Unity.VisualScripting;
+using Enemy;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
 
 namespace CardAsset
 {
@@ -18,7 +15,7 @@ namespace CardAsset
         private const int HealAmount = 6;
         public bool hasExtraHeal = false; // Accessory 애주가
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
             int healAmount = HealAmount;
             PlayerController p = PlayerController.Instance;
@@ -27,7 +24,7 @@ namespace CardAsset
             if(cardLevel == CardLevel.Three)
             {
                 healAmount = HealAmount * 3;
-                if(GetComponent(p.gameObject, out EffectManager em)) 
+                if(GetComponent(p, out EffectManager em)) 
                     em.AddEffectTurn(EffectManager.Kind.Buff, 1, false);
             }
             

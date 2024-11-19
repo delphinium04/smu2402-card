@@ -75,14 +75,14 @@ namespace Entity
         {
             int value = (int)(damage * TakeMultiplier / 100.0f);
             Hp -= value;
-            Debug.Log($"{data.name}: 피해 {value} 입음");
+            Debug.Log($"{data.Name}: {value} 데미지 입음");
         }
 
         public virtual void Heal(int heal)
         {
             int value = (int)(heal * HealMultiplier / 100.0f);
             Hp += heal;
-            Debug.Log($"{data.name}: 체력 {heal} 회복");
+            Debug.Log($"{data.Name}: 체력 {heal} 회복");
         }
     }
 }

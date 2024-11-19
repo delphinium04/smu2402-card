@@ -16,7 +16,7 @@ namespace CardAsset
 
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
             if (targets.Length == 0)
             {
@@ -30,8 +30,7 @@ namespace CardAsset
             for (int i = 0; i < 5; i++)
             {
                 int randomIndex = Random.Range(0, targets.Length);
-                if (GetComponent(targets[randomIndex], out BaseEnemy enemy))
-                    enemy.TakeDamage(damage);
+               targets[randomIndex].TakeDamage(damage);
             }
         }
     }

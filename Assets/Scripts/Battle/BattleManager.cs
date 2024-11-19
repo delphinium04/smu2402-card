@@ -15,23 +15,32 @@ using Unity.VisualScripting;
 /// </summary>
 public class BattleManager : MonoBehaviour
 {
+    public List<EntityData> TESTENEMYDATALIST;
+    public List<BaseEnemy> enemyList; // 동적으로 적 오브젝트들 생성 구현 필요(맵 스크립트 작성 필요)
+
     public static BattleManager Instance { get; private set; }
 
-    public List<EntityData> TESTENEMYDATALIST;
-    
-    public List<BaseEnemy> enemyList = new List<BaseEnemy>(); // 동적으로 적 오브젝트들 생성 구현 필요(맵 스크립트 작성 필요)
+    public enum State
+    {
+        Idle,
+        WaitForCard,
+        WaitForTarget
+    }
 
-    private int cardDrawAmount = 5;
-    private int cardsPlayedThisTurn = 0;
-    private int maxCardsPerTurn = 3;
+    public State CurrentState { get; private set; } = State.Idle;
 
     public Action OnTurnPassed = null;
 
-    private bool isPlayerTurn = true;
+    public int cardDrawAmount = 5;
+    int maxCardsPerTurn = 3;
+
+    bool isPlayerTurn = true;
     bool isBattleEnd = true;
 
-    private List<CardBehaviour> drewCards = new List<CardBehaviour>(); // 플레이어가 현재 턴에서 드로우한 카드
-    private List<CardBehaviour> selectedCards = new List<CardBehaviour>(); // 플레이어가 현재 턴에서 선택한 사용할 카드
+    List<CardBehaviour> drewCards; // 플레이어가 현재 턴에서 드로우한 카드
+    List<Tuple<CardBehaviour, BaseEnemy>> preservedCardAct;
+    public BaseEnemy clickedEnemy;
+
 
     private void Awake()
     {
@@ -43,168 +52,218 @@ public class BattleManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        CurrentState = State.Idle;
     }
 
     private void Start()
     {
         enemyList.AddRange(TESTENEMYDATALIST.Select(EnemyManager.GetEnemy));
+
         // TEST
+        StartBattle();
+    }
+
+    public void StartBattle()
+    {
         StartCoroutine(BattleRoutine());
     }
 
-    public IEnumerator BattleRoutine()
+
+    void ResetVariables()
     {
         PlayerController.Instance.ResetSetting();
 
         isPlayerTurn = true;
         isBattleEnd = false;
+        CurrentState = State.Idle;
 
-        enemyList.ForEach(enemy => { enemy.OnDeath += OnEnemyDie; });
+        drewCards = new List<CardBehaviour>();
+        preservedCardAct = new List<Tuple<CardBehaviour, BaseEnemy>>();
+        enemyList.ForEach(enemy =>
+        {
+            enemy.OnDeath += OnEnemyDie;
+            enemy.OnClicked += OnEnemyClicked;
+        });
 
+        UIManager.Instance.OnCardSelectEndButtonClicked += OnCardConfirmBtnClicked;
+        UIManager.Instance.OnTurnPassButtonClicked += OnTurnEndButtonClicked;
+        // Make Enemy Object by Data (by someone... like GameManager?)
+    }
+
+    IEnumerator BattleRoutine()
+    {
+        ResetVariables();
         Debug.Log("Battle Started");
-        
+
         while (!isBattleEnd)
         {
-            OnTurnPassed?.Invoke();
-            PlayerTurn();
+            PlayerAct();
+            // 턴 종료 전까지 대기
             while (isPlayerTurn) yield return null;
-            EnemyTurn();
+            CheckIsBattleEnd();
+
+            EnemyAct();
+            CheckIsBattleEnd();
             yield return null;
+
+            OnTurnPassed?.Invoke();
         }
-        
-        yield return null;
+
+        if (enemyList.Count == 0)
+        {
+            Debug.Log("게임 승리");
+            // Load ...
+        }
+        else
+        {
+            Debug.Log("게임 패배");
+            // Load Fail Scene
+        }
     }
 
-    private void OnEnemyDie(BaseEnemy e)
-    {
-        // Give Item Or Card ...
-        enemyList.Remove(e);
-        Destroy(e.gameObject);
-        CheckEnd();
-    }
-
-    private void CheckEnd()
+    private void CheckIsBattleEnd()
     {
         if (PlayerController.Instance.Hp <= 0)
         {
             if (!PlayerController.Instance.isRevived)
                 PlayerController.Instance.RevivePlayer();
             else
-            {
-                EndBattle(false);
-            }
+                isBattleEnd = true;
+        }
 
+        if (enemyList.Count == 0 || CardManager.Instance.IsEmpty)
+            isBattleEnd = true;
+    }
+
+    // 플레이어 행동 시작
+    private void PlayerAct()
+    {
+        Debug.Log("플레이어 턴");
+        isPlayerTurn = true;
+        drewCards.AddRange(CardManager.Instance.DrawCard(cardDrawAmount));
+        if (drewCards.Count <= 0)
+        {
+            Debug.LogError("No Card in drew cards");
             return;
         }
 
-        if (enemyList.Count <= 0)
-            EndBattle(true);
+        for (int i = 0; i < drewCards.Count; i++)
+        {
+            // Action 등록
+            drewCards[i].OnCardClicked += OnCardClicked;
+
+            // x좌표 -5 ~ 5 나열
+            drewCards[i].transform.position = Vector3.right * (-5 + (10.0f / drewCards.Count) * i);
+            drewCards[i].GetComponent<SpriteRenderer>().sortingOrder = 100 + i;
+        }
+
+        CurrentState = State.WaitForCard;
+        UIManager.Instance.SetUI(State.WaitForCard);
     }
 
-    private void EndBattle(bool playerWon)
+    // 플레이어 행동 끝
+    private void PlayerActEnd()
     {
-        if (playerWon)
+        isPlayerTurn = false;
+
+        // preservedCardAct에 없는 카드만 다시 복귀
+        CardManager.Instance.AddCardToDeck(
+            drewCards.Where(
+                card => preservedCardAct.All(
+                    x => x.Item1 != card)).ToArray());
+
+        drewCards.ForEach(e => Destroy(e.gameObject));
+        drewCards.Clear();
+        preservedCardAct.Clear();
+        
+        CheckIsBattleEnd();
+    }
+
+
+    // 카드 클릭 시 Action<CardBehaviour>를 통해 Invoke됨    
+    private void OnCardClicked(CardBehaviour c)
+    {
+        if (!isPlayerTurn || CurrentState != State.WaitForCard)
         {
-            Debug.Log("플레이어가 승리했습니다!");
-            // 플레이어 승리로 전투 종료시 묘지의 카드들 플레이어 덱으로 복구
+            Debug.LogWarning("플레이어 턴이 아님 / 선택 불가능");
+            return;
+        }
+
+        // 이미 선택한 경우
+        Tuple<CardBehaviour, BaseEnemy> cardTargetTuple;
+        if ((cardTargetTuple = preservedCardAct.Find(x => x.Item1 == c)) != null)
+        {
+            Debug.Log("카드 취소됨");
+            preservedCardAct.Remove(cardTargetTuple);
+        }
+        else if (preservedCardAct.Count < maxCardsPerTurn)
+        {
+            Debug.Log("카드 선택됨");
+            clickedEnemy = null;
+
+            if (c.Data.TargetingType == TargetingType.Single)
+            {
+                CurrentState = State.WaitForTarget;
+                StartCoroutine(WaitForEnemySelection(c));
+            }
+            else
+            {
+                cardTargetTuple = new Tuple<CardBehaviour, BaseEnemy>(c, clickedEnemy);
+                preservedCardAct.Add(cardTargetTuple);
+            }
         }
         else
-        {
-            Debug.Log("플레이어가 패배했습니다...");
-        }
+            Debug.LogWarning("카드 선택 한계 도달");
     }
 
-    private void PlayerTurn()
+    private IEnumerator WaitForEnemySelection(CardBehaviour c)
     {
-        isPlayerTurn = true;
-        cardsPlayedThisTurn = 0;
-        drewCards = new List<CardBehaviour>(CardManager.Instance.DrawCard(cardDrawAmount));
-        selectedCards.Clear();
-        Debug.Log("플레이어의 턴입니다. 카드를 사용하세요.");
-        // 카드 사용 후 isPlayerTurn = false;
+        Debug.Log("단일 타겟 카드가 선택되었습니다. 적을 선택하세요.");
+        CurrentState = State.WaitForTarget;
+        UIManager.Instance.SetUI(State.WaitForTarget);
+        // 적 클릭 대기
+        while (clickedEnemy is null) yield return null;
+        preservedCardAct.Add(new Tuple<CardBehaviour, BaseEnemy>(c, clickedEnemy));
+        CurrentState = State.WaitForCard;
     }
 
-    // 이번턴에 사용할 카드(핸드 카드 오브젝트들 클릭 또는 드래그로 이벤트 함수로 호출)
-    public void SelectCardForUse(CardBehaviour card)
+    void OnEnemyClicked(BaseEnemy e)
     {
-        if (!isPlayerTurn)
-        {
-            Debug.LogWarning("현재 플레이어의 턴이 아닙니다.");
-            return;
-        }
-
-        if (selectedCards.Count >= maxCardsPerTurn)
-        {
-            Debug.Log("이번 턴에 사용할 수 있는 최대 카드 수에 도달했습니다.");
-            return;
-        }
-
-        if (drewCards.Contains(card))
-        {
-            selectedCards.Add(card);
-            drewCards.Remove(card);
-            Debug.Log(card.Card.CardName + " 카드를 이번 턴에 사용하도록 선택했습니다.");
-
-            // 단일 타겟 카드인 경우 적 선택 유도
-            if (card.Card.TargetingType == TargetingType.Single)
-            {
-                Debug.Log("단일 타겟 카드가 선택되었습니다. 적을 선택하세요.");
-            }
-        }
+        if (CurrentState != State.WaitForTarget) return;
+        clickedEnemy = e;
+        Debug.Log($"{clickedEnemy.name} clicked");
     }
 
-    // 이번 턴에 선택된 카드를 취소하고 핸드로 되돌림
-    public void CancelCardSelection(CardBehaviour card)
+    // 카드 선택 완료, 타깃 선택 + 카드 정리
+    private void OnCardConfirmBtnClicked()
     {
-        if (selectedCards.Contains(card))
-        {
-            selectedCards.Remove(card);
-            drewCards.Add(card);
-            Debug.Log(card.Card.CardName + " 카드 선택이 취소되었습니다.");
-        }
+        if (!isPlayerTurn || CurrentState == State.WaitForTarget) return;
+        CurrentState = State.Idle;
+        UIManager.Instance.SetUI(State.Idle);
+        
+        Debug.Log("선택한 카드 사용");
+        preservedCardAct.ForEach(tuple => { tuple.Item1.Use(tuple.Item2); });
+        PlayerActEnd();
     }
 
-    // 턴 종료 버튼 UI 이벤트로 호출(플레이어 턴 종료하면서 카드 사용)
-    public void EndPlayerTurn()
+
+    // 카드 실행 및 정리, 턴 종료
+    private void OnTurnEndButtonClicked()
     {
-        if (!isPlayerTurn)
-        {
-            return;
-        }
-
-        // Debug.Log("플레이어의 턴 종료. 선택된 카드를 사용합니다.");
-        // foreach (var card in useList)
-        // {
-        //     // 적을 선택하지 않았을 때 선택할 때까지 기다리도록 추가 구현 필요
-        //     if (card.Card.TargetingType == TargetingType.Single && selectedEnemy == null)
-        //     {
-        //         Debug.Log("단일 타겟 카드는 적을 선택해야 합니다.");
-        //         return; // 적이 선택되지 않았다면 함수 종료
-        //     }
-        //
-        //     PlayCard(card);
-        // }
-
-        selectedCards.Clear();
-        PlayerController.Instance.EndTurn();
-        EnemyTurn();
-        OnTurnPassed?.Invoke();
+        PlayerActEnd();
     }
 
-    public bool IsCardInUseList(CardBehaviour card)
+    // 적 사망 시 Action<BaseEnemy>를 통해 Invoke됨    
+    private void OnEnemyDie(BaseEnemy e)
     {
-        return selectedCards.Contains(card);
+        // Give Item Or Card ...
+        enemyList.Remove(e);
+        Destroy(e.gameObject);
     }
 
-    public void PlayCard(CardBehaviour card)
+    private void EnemyAct()
     {
-        List<GameObject> targets = new List<GameObject>();
-    }
-
-    private void EnemyTurn()
-    {
-        Debug.Log("적의 턴입니다.");
+        Debug.Log("적의 턴");
         enemyList.ForEach(e => e.ActivatePattern());
-        isPlayerTurn = true;
     }
 }

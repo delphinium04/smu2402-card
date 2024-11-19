@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Card;
 using Effect;
+using Enemy;
 using UnityEngine;
 
 namespace CardAsset
@@ -16,14 +17,8 @@ namespace CardAsset
         public Sprite upgradedImage;
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
-            if (targets.Length == 0)
-            {
-                Debug.LogError($"{CardName}: No target was assigned!");
-                return;
-            }
-
             if (effect1 == null || effect2 == null)
             {
                 Debug.LogError($"{CardName}: No effect was assigned!");
@@ -42,7 +37,7 @@ namespace CardAsset
 
             if (isUpgraded) return;
             PlayerController p = PlayerController.Instance;
-            if (!GetComponent(p.gameObject, out EffectManager em)) return;
+            if (!GetComponent(p, out EffectManager em)) return;
             em.AddEffect(effect1, turn);
             em.AddEffect(effect2, turn);
         }

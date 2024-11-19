@@ -19,15 +19,22 @@ namespace CardAsset
         private const int EnemyCount = 2;
         public bool hasExtraDamage = false; // Accessory Double Gun
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
-            if (targets.Length == 0) return;
-            
             int damage = Damage;
             int enemyCount = EnemyCount;
-            
-            if (CardLevel == CardLevel.Two) damage = Damage * 2;
-            if (CardLevel == CardLevel.Three) { damage = Damage * 3; enemyCount = EnemyCount + 1; }
+
+            switch (CardLevel)
+            {
+                case CardLevel.Two:
+                    damage = Damage * 2;
+                    break;
+                case CardLevel.Three:
+                    damage = Damage * 3;
+                    enemyCount = EnemyCount + 1;
+                    break;
+            }
+
             if (hasExtraDamage) damage++;
 
             damage = (int)(damage * (PlayerController.Instance.AtkMultiplier / 100.0f));
@@ -35,10 +42,11 @@ namespace CardAsset
             List<BaseEnemy> alreadyList = new List<BaseEnemy>();
             for (int i = 0, index = Random.Range(0, targets.Length); i < enemyCount; i++, index = Random.Range(0, targets.Length))
             {
-                if(GetComponent(targets[index], out BaseEnemy enemy)) enemy.TakeDamage(damage);
+                BaseEnemy enemy = targets[index];
+                enemy.TakeDamage(damage);
                 if (CardLevel != CardLevel.Three || alreadyList.Contains(enemy)) continue;
                 
-                if(GetComponent(enemy.gameObject, out EffectManager em))
+                if(GetComponent(enemy, out EffectManager em))
                     em.AddEffectTurn(EffectManager.Kind.Debuff, 1, false);
                 alreadyList.Add(enemy);
             }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Card;
 using Effect;
+using Enemy;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,11 +15,11 @@ namespace CardAsset
         public Sprite upgradedImage;
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
             PlayerController p = PlayerController.Instance;
 
-            if (!GetComponent(p.gameObject, out EffectManager em)) return;
+            if (!GetComponent(p, out EffectManager em)) return;
 
             var list = em.GetEffects(EffectManager.Kind.Debuff);
             switch (list.Count)

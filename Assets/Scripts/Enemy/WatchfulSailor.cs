@@ -7,10 +7,9 @@ namespace Enemy
     {
         public override void ActivatePattern()
         {
-            for (int i = 0; i < 2; i++)
-            {
-                PlayerController.Instance.TakeDamage(Atk);
-            }
+            PlayerController.Instance.TakeDamage(Atk);
+            PlayerController.Instance.TakeDamage(Atk);
+
         }
     }
 }

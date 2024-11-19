@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Enemy;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -9,46 +11,49 @@ namespace Card
     [RequireComponent(typeof(SpriteRenderer))]
     public class CardBehaviour : MonoBehaviour
     {
-        public BaseCard Card { get; private set; }
+        public BaseCard Data { get; private set; }
+
+        public Action<CardBehaviour> OnCardClicked;
 
         private void Awake()
         {
-            Card = null;
+            Data = null;
         }
 
         // 카드 첫 세팅, CardManager에서 사용
         public void Init(BaseCard c)
         {
-            if (Card is not null) return;
-            Card = c;
-            name = Card.CardName;
-            GetComponent<SpriteRenderer>().sprite = Card.Image;
+            if (Data is not null) return;
+            Data = c;
+            name = Data.CardName;
+            GetComponent<SpriteRenderer>().sprite = Data.Image;
         }
 
-        
+
         // ReSharper disable Unity.PerformanceAnalysis
         /// <summary>
         /// 카드 사용 시 호출
         /// </summary>
-        /// <param name="targets">카드의 사용 대상 (또는 전체)</param>
-        public void Use(params GameObject[] targets)
+        /// <param name="singleTarget">TargetingType이 Single일 때만 넘겨주면 됨</param>
+        public void Use(BaseEnemy singleTarget = null)
         {
-            // 타겟이 필요하나 targets에 아무것도 없는 경우
-            if (targets.Length == 0 && Card.TargetingType != TargetingType.None)
+            // Single 타겟이 필요하나 지정하지 않은 경우
+            if (singleTarget == null && Data.TargetingType != TargetingType.Single)
             {
-                Debug.LogError($"{Card.CardName} Need targets to use Card");
+                Debug.LogWarning($"{Data.CardName}: No Target, maybe dead");
                 return;
             }
-            Card.Use(targets);
+            
+            if (Data.TargetingType == TargetingType.Single)
+                Data.Use(singleTarget);
+            else
+                Data.Use(BattleManager.Instance.enemyList.ToArray());
         }
 
-        // 전투 중에 카드 오브젝트 클릭 시 이벤트 함수
+        // 카드 오브젝트 클릭 시 Action 실행
         private void OnMouseDown()
         {
-            if (BattleManager.Instance != null)
-            {
-                // BattleManager.Action
-            }
+            OnCardClicked?.Invoke(this);
         }
     }
 }

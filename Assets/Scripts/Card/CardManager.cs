@@ -35,6 +35,8 @@ namespace Card
             _cardDeck.AddCard(TestCardList.ToArray());
             _cardDeck.AddCard(TestCardList.ToArray());
             _cardDeck.AddCard(TestCardList.ToArray());
+            _cardDeck.AddCard(TestCardList.ToArray());
+            _cardDeck.AddCard(TestCardList.ToArray());
         }
 
         /// <summary>
@@ -78,9 +80,9 @@ namespace Card
             => CreateCardInstance(cardData);
 
         public void AddCardToDeck(params CardBehaviour[] cards)
-            => AddCardToDeck((from card in cards select card.GetComponent<BaseCard>()).ToArray());
+            => AddCardToDeck((from card in cards select card.Data).ToArray());
 
-        public void AddCardToDeck(params BaseCard[] cards)
+        void AddCardToDeck(params BaseCard[] cards)
             => _cardDeck.AddCard(cards);
 
         /// <summary>
@@ -91,10 +93,12 @@ namespace Card
         public bool CanUpgrade(out List<CardBehaviour> upgradedCards, params CardBehaviour[] selectedCards)
         {
             // pass
-            upgradedCards = selectedCards.ToList().Where(c => c.Card.CardType == CardType.Normal).ToList();
-            if (upgradedCards.Count < 2) return false;
-            else return true; // else -> Sort + classify by Card
+            upgradedCards = selectedCards.ToList().Where(c => c.Data.CardType == CardType.Normal).ToList();
+            return upgradedCards.Count >= 2;
+            // else -> Sort + classify by Card
         }
+        
+        public bool IsEmpty => _cardDeck.IsEmpty();
 
         private CardBehaviour CreateCardInstance(BaseCard c)
         {
@@ -103,7 +107,7 @@ namespace Card
                 Debug.LogError("CardManager: No CardPrefab!");
             }
 
-            var cardObject = Instantiate(_cardPrefab, transform).GetComponent<CardBehaviour>();
+            var cardObject = Instantiate(_cardPrefab).GetComponent<CardBehaviour>();
             cardObject.Init(c);
             return cardObject;
         }

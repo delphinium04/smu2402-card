@@ -1,5 +1,6 @@
 ﻿using Card;
 using Effect;
+using Enemy;
 using UnityEngine;
 
 namespace CardAsset
@@ -13,7 +14,7 @@ namespace CardAsset
         public Sprite upgradedImage;
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
             if (effect == null)
             {
@@ -22,7 +23,7 @@ namespace CardAsset
             }
 
             PlayerController p = PlayerController.Instance;
-            if (GetComponent(p.gameObject, out EffectManager em)) em.AddEffect(effect, 1 + (isUpgraded ? 1 : 0));
+            if (GetComponent(p, out EffectManager em)) em.AddEffect(effect, 1 + (isUpgraded ? 1 : 0));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CardAsset
         public Sprite upgradedImage;
         public bool isUpgraded = false;
 
-        public override void Use(params GameObject[] targets)
+        public override void Use(params BaseEnemy[] targets)
         {
             if (targets.Length == 0)
             {
@@ -24,8 +24,7 @@ namespace CardAsset
 
             int damage = isUpgraded ? Damage * 2 : Damage;
 
-            if (GetComponent(targets[0], out BaseEnemy enemy))
-                enemy.TakeDamage(damage);
+            targets[0].TakeDamage(damage);
 
             if (isUpgraded)
                 return;

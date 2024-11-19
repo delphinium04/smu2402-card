@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Enemy;
+using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Card
 {
@@ -25,13 +27,13 @@ namespace Card
         public TargetingType TargetingType => targetingType;
 
         /// <returns>True when used</returns>
-        public abstract void Use(params GameObject[] targets);
+        public abstract void Use(params BaseEnemy[] targets);
 
-        protected static bool GetComponent<T>(GameObject gameObject, out T component)
+        protected static bool GetComponent<T>(Object obj, out T component)
         {
-            if (!gameObject.TryGetComponent(out component))
+            if ((component = obj.GetComponent<T>()) != null)
                 return true;
-            Debug.LogError($"GameObject {gameObject.name} does not have {component.GetType().Name}");
+            Debug.LogError($"Object {obj.name} does not have {typeof(T).Name}");
             return false;
         }
     }
