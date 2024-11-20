@@ -37,17 +37,23 @@ namespace Card
         /// <param name="singleTarget">TargetingType이 Single일 때만 넘겨주면 됨</param>
         public void Use(BaseEnemy singleTarget = null)
         {
+            Debug.Log($"{Data.CardName} - {singleTarget?.name}");
             // Single 타겟이 필요하나 지정하지 않은 경우
-            if (singleTarget == null && Data.TargetingType != TargetingType.Single)
+            if (singleTarget == null && Data.TargetingType == TargetingType.Single)
             {
                 Debug.LogWarning($"{Data.CardName}: No Target, maybe dead");
                 return;
             }
-            
+
             if (Data.TargetingType == TargetingType.Single)
+            {
+                Debug.Log($"{Data.CardName} used to {singleTarget.name}");
                 Data.Use(singleTarget);
+            }
             else
-                Data.Use(BattleManager.Instance.enemyList.ToArray());
+            {
+                Data.Use(Managers.Battle.enemyList.ToArray());
+            }
         }
 
         // 카드 오브젝트 클릭 시 Action 실행

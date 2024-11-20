@@ -29,7 +29,7 @@ namespace Effect
 
         void Start()
         {
-            BattleManager.Instance.OnTurnPassed += OnTurnPassed;
+            Managers.Battle.OnTurnPassed += OnTurnPassed;
         }
 
         public IReadOnlyList<BaseEffect> GetEffects(Kind kind = Kind.All)

@@ -1,4 +1,4 @@
-using Entity;
+using Enemy;
 using UnityEngine;
 
 namespace Enemy

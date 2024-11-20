@@ -1,11 +1,11 @@
-using Entity;
+using Enemy;
 using UnityEngine;
 
 namespace Enemy
 {
     public class PirateLieutenant : BaseEnemy
     {
-        private bool IsHeal = false;
+        private bool _isHeal = false;
  
         public override void ActivatePattern()
         {
@@ -17,9 +17,9 @@ namespace Enemy
                 // 취약 부여
             }
 
-            if (Hp > 30 || IsHeal) return;
+            if (Hp > 30 || _isHeal) return;
             Heal(30);
-            IsHeal = true;
+            _isHeal = true;
         }
     }
 }

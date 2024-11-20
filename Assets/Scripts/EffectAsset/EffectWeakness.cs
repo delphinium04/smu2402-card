@@ -1,6 +1,6 @@
 using System.Collections;
 using Effect;
-using Entity;
+using Enemy;
 using UnityEngine;
 
 namespace EffectAsset
@@ -11,13 +11,13 @@ namespace EffectAsset
     {
         protected override void Apply()
         {
-            if(GetComponent(Target.gameObject, out AbstractEntity entity))
+            if(GetComponent(Target.gameObject, out BaseEnemy entity))
                 entity.AtkMultiplier -= 25;
         }
 
         public sealed override void Remove()
         {           
-            if(GetComponent(Target.gameObject, out AbstractEntity entity))
+            if(GetComponent(Target.gameObject, out BaseEnemy entity))
                 entity.AtkMultiplier += 25;
         }
     }

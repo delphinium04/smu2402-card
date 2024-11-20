@@ -1,4 +1,4 @@
-using Entity;
+using Enemy;
 using UnityEngine;
 
 namespace Enemy
@@ -8,7 +8,6 @@ namespace Enemy
         public override void ActivatePattern()
         {
             PlayerController.Instance.TakeDamage(Atk);
-            PlayerController.Instance.DecreaseGold(10);
         }
     }
 }

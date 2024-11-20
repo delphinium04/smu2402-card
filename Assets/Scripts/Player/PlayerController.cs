@@ -1,18 +1,17 @@
 using System;
-using Entity;
+using Enemy;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
-public class PlayerController : AbstractEntity
+public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
     
-    public string PlayerName { get; private set; } = "black skull";
-    private int maxHp = 70;
-
-    public bool isRevived { get; private set; } = false; // 플레이어 최초 사망 부활 확인
+    public Action<int, int> OnHpChanged = null;
     
-   
+    public string PlayerName { get; private set; } = "black skull";
+    readonly int _maxHp = 70;
+    public bool isRevived { get; private set; } = false;
+
     // 동료 의사 여부
     public bool HasDoctor = false;
 
@@ -24,25 +23,74 @@ public class PlayerController : AbstractEntity
     public bool canSelectSkillCard = true;
     public bool canSelectSpecialCard = true;
 
-    public int Gold { get; private set; } = 0;
-    private int minGold = 0;
+    protected Sprite image;
+    public string Name { get; private set; }
 
-    private void Awake()
+    EntityUI _ui;
+
+    int _hp;
+    public int Hp
     {
-        // 싱글턴 인스턴스 설정
-        if (Instance != null && Instance != this)
+        get => _hp;
+        private set
         {
-            Destroy(gameObject);
-            return;
+            _hp = value;
+            OnHpChanged?.Invoke(_hp, _maxHp);
         }
-        Instance = this;
-        DontDestroyOnLoad(gameObject); // 씬 전환 시에도 유지되도록 설정
-        Init(Resources.Load<EntityData>("Player"));
+    }
+
+    private int _atkMultiplier = 100;
+
+    public int AtkMultiplier
+    {
+        get => _atkMultiplier;
+        set
+        {
+            _atkMultiplier = value;
+            Debug.Log("플레이어의 공격 효과 계수가 " + _atkMultiplier + "%로 설정되었습니다.");
+        }
+    }
+
+    private int _healMultiplier = 100;
+
+    public int HealMultiplier
+    {
+        get => _healMultiplier;
+        set
+        {
+            _healMultiplier = value;
+            Debug.Log("플레이어의 공격 효과 계수가 " + _healMultiplier + "%로 설정되었습니다.");
+        }
+    }
+
+    private int _takeMultiplier = 100;
+
+    public int TakeMultiplier
+    {
+        get => _takeMultiplier;
+        set
+        {
+            _takeMultiplier = value;
+            Debug.Log("플레이어의 공격 효과 계수가 " + _takeMultiplier + "%로 설정되었습니다.");
+        }
+    }
+
+    protected void Awake()
+    {
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+        
+        DontDestroyOnLoad(gameObject);
+
+        Hp = _maxHp;
+        _ui = GetComponentInChildren<EntityUI>();
     }
 
     void Start()
     {
-        BattleManager.Instance.OnTurnPassed += EndTurn;
+        _ui.UpdateHP(Hp, _maxHp);
+        OnHpChanged += _ui.UpdateHP;
+        Managers.Battle.OnTurnPassed += EndTurn;
     }
 
     public void ResetSetting()
@@ -58,16 +106,23 @@ public class PlayerController : AbstractEntity
         {
             Hp = HasDoctor ? 30 : 1;
             isRevived = true;
-            Debug.Log("플레이어가 부활했습니다. 회복량이 50% 감소됩니다. 부활 후 체력: " + Hp);
+            Debug.Log($"플레이어 부활. 회복 디버프 적용. 부활 후 체력: {Hp}");
         }
     }
 
-    public override void Heal(int heal)
+    public void Heal(int heal)
     {
-        int adjustedHeal = (int)(heal * (healMultiplier / 100.0f) * (isRevived ? 0.5f : 1));
+        int adjustedHeal = (int)(heal * (_healMultiplier / 100.0f) * (isRevived ? 0.5f : 1));
         Hp += adjustedHeal;
-        Hp = Mathf.Min(Hp, maxHp); // 최대 체력을 초과하지 않도록 설정
+        Hp = Mathf.Min(Hp, _maxHp); // 최대 체력을 초과하지 않도록 설정
         Debug.Log($"플레이어: {adjustedHeal} 체력 회복");
+    }
+
+    public void TakeDamage(int damage)
+    {
+        int value = (int)(damage * TakeMultiplier / 100.0f);
+        Hp -= value;
+        Debug.Log($"Player: {value} 데미지 입음");
     }
 
     // 동료 의사 합류했을 때 호출
@@ -96,6 +151,7 @@ public class PlayerController : AbstractEntity
                 Debug.Log("환경변수 무시 효과가 종료되었습니다.");
             }
         }
+
         EndBuff();
     }
 
@@ -105,21 +161,5 @@ public class PlayerController : AbstractEntity
         canSelectNormalCard = true;
         canSelectSpecialCard = true;
         canSelectSkillCard = true;
-    }
-    
-    public void IncreaseGold(int amount)
-    {
-        Gold += amount;
-    }
-    public void DecreaseGold(int amount)
-    {
-        if (Gold > 10)
-        { 
-            Gold -= amount; 
-        }
-        else if (Gold <= 10)
-        {
-            Gold = minGold;
-        }
     }
 }

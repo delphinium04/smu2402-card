@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Card;
 using Enemy;
-using Entity;
 using UnityEngine;
 
 namespace CardAsset
