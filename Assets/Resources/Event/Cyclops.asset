@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f65846a1384d268897dc765d99f32e, type: 3}
+  m_Name: Cyclops
+  m_EditorClassIdentifier: 
+  storyEventName: "\uC0AC\uC774\uD074\uB86D\uC2A4\uC758 \uC12C"
+  storyDescription: desc
+  storyAcceptPreview: accept preview
+  storyDenyPreview: deny preview
+  storyAcceptDescription: accept desc
+  storyDenyDescription: deny desc

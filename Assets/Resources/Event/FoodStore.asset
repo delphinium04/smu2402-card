@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f563539a2b584be48832cb04d6121766, type: 3}
+  m_Name: FoodStore
+  m_EditorClassIdentifier: 
+  storyEventName: "\uC120\uBC15 \uC74C\uC2DD\uC810"
+  storyDescription: "\uD5A5\uD574\uB97C \uD558\uB358 \uB3C4\uC911 \uC120\uBC15 \uC74C\uC2DD\uC810\uC744
+    \uBC1C\uACAC\uD558\uAC8C \uB41C\uB2E4. \uB3D9\uB8CC\uB4E4\uC740 \uC624\uB298\uC740
+    \uC880 \uB9C8\uC2DC\uC790\uACE0 \uB180\uC790\uACE0 \uC120\uC7A5\uB2D8\uAED8 \uC81C\uC548\uD569\uB2C8\uB2E4"
+  storyAcceptPreview: "\uAE30\uBD84\uC774\uB2E4, \uB2E4\uAC19\uC774 \uB9C8\uC2DC\uC790!"
+  storyDenyPreview: "\uD5DB\uC18C\uB9AC\uD558\uC9C0 \uB9D0\uACE0 \uD56D\uD574\uC5D0
+    \uC9D1\uC911\uD574!"
+  storyAcceptDescription: "\uCCB4\uB825 15 \uD68C\uBCF5, 2\uD134\uAC04 ? \uD6A8\uACFC
+    \uD68D\uB4DD"
+  storyDenyDescription: "\uC544\uBB34\uB7F0 \uD6A8\uACFC \uC5C6\uC74C"

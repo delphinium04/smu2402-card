@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Card;
 using Enemy;
+using UI;
 using Unity.VisualScripting;
 
 /// <summary>
@@ -14,6 +15,7 @@ using Unity.VisualScripting;
 /// </summary>
 public class BattleManager
 {
+    public BattleUI UI;
     public enum State
     {
         Idle,
@@ -48,8 +50,9 @@ public class BattleManager
     // 적 세팅 및 게임 시작
     public void StartBattle()
     {
+        UI= GameObject.Find("BattleUI").GetComponent<BattleUI>();
         var tempEnemy = Managers.Resource.GetEnemy(Managers.Resource.Load<EnemyData>("Enemy/Boatswain"));
-        tempEnemy.transform.position = Vector3.right * 8;
+        tempEnemy.transform.position = Vector3.right * 7;
         enemyList.Add(tempEnemy);
         
         Managers.RunCoroutine(BattleRoutine());
@@ -71,8 +74,8 @@ public class BattleManager
             enemy.OnClicked += OnEnemyClicked;
         });
 
-        Managers.UI.OnPassBtnClicked += OnTurnEndButtonClicked;
-        Managers.UI.OnCardConfirmBtnClicked += OnCardConfirmBtnClicked;
+        UI.OnPassBtnClicked += OnTurnEndButtonClicked;
+        UI.OnCardConfirmBtnClicked += OnCardConfirmBtnClicked;
         // Make Enemy Object by Data (by someone... like GameManager?)
     }
 
@@ -94,16 +97,17 @@ public class BattleManager
 
             OnTurnPassed?.Invoke();
         }
-
+        
+        // win
         if (enemyList.Count == 0)
         {
             Debug.Log("게임 승리");
-            // Load ...
+            Managers.Game.EndBattle();
         }
         else
-        {
+        {            
             Debug.Log("게임 패배");
-            // Load Fail Scene
+            Managers.Game.GameLose();
         }
     }
 
@@ -144,7 +148,7 @@ public class BattleManager
         }
 
         CurrentState = State.WaitForCard;
-        Managers.UI.SetUI(State.WaitForCard);
+        UI.SetUI(State.WaitForCard);
     }
 
     // 플레이어 행동 끝
@@ -206,7 +210,7 @@ public class BattleManager
     {
         Debug.Log("단일 타겟 카드가 선택되었습니다. 적을 선택하세요.");
         CurrentState = State.WaitForTarget;
-        Managers.UI.SetUI(State.WaitForTarget);
+        UI.SetUI(State.WaitForTarget);
         // 적 클릭 대기
         while (_clickedEnemy is null) yield return null;
         _preservedCardAct.Add(new Tuple<CardBehaviour, BaseEnemy>(c, _clickedEnemy));
@@ -225,7 +229,7 @@ public class BattleManager
     {
         if (!_isPlayerTurn || CurrentState == State.WaitForTarget) return;
         CurrentState = State.Idle;
-        Managers.UI.SetUI(State.Idle);
+        UI.SetUI(State.Idle);
 
         Debug.Log("선택한 카드 사용");
         Debug.Log(_preservedCardAct.Count);
@@ -233,6 +237,11 @@ public class BattleManager
         PlayerActEnd();
     }
 
+    public void AddEnemy(BaseEnemy e)
+    {
+        enemyList.Add(e);
+        e.OnClicked += OnEnemyClicked;
+    }
 
     // 카드 실행 및 정리, 턴 종료
     private void OnTurnEndButtonClicked()
@@ -251,6 +260,6 @@ public class BattleManager
     private void EnemyAct()
     {
         Debug.Log("적의 턴");
-        enemyList.ForEach(e => e.ActivatePattern());
+        enemyList.ToList().ForEach(e => e.ActivatePattern());
     }
 }

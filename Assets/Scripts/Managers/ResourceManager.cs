@@ -9,9 +9,10 @@ using Type = Enemy.Type;
 public class ResourceManager
 {
     public T Load<T>(string path) where T : Object
-    {
-        return Resources.Load<T>(path);
-    }
+        => Resources.Load<T>(path);
+    
+    public T[] LoadAll<T>(string path) where T : Object
+        => Resources.LoadAll<T>(path);
 
     /// <summary>
     /// Instantiate Object
@@ -22,13 +23,9 @@ public class ResourceManager
     public GameObject Instantiate(string path, Transform parent = null)
     {
         GameObject prefab = Load<GameObject>($"Prefabs/{path}");
-        if (prefab == null)
-        {
-            Debug.Log($"Failed to load prefab : {path}");
-            return null;
-        }
-
-        return Object.Instantiate(prefab, parent);
+        if (prefab != null) return Object.Instantiate(prefab, parent);
+        Debug.Log($"Failed to load prefab : {path}");
+        return null;
     }
     
     public BaseEnemy GetEnemy(EnemyData d)

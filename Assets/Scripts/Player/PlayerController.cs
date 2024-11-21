@@ -88,8 +88,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        _ui.UpdateHP(Hp, _maxHp);
-        OnHpChanged += _ui.UpdateHP;
+        _ui.UpdateHp(Hp, _maxHp);
+        OnHpChanged += _ui.UpdateHp;
         Managers.Battle.OnTurnPassed += EndTurn;
     }
 

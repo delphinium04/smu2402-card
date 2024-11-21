@@ -29,24 +29,27 @@ namespace Enemy
 
         int _maxHp;
         int _hp;
-        public int Hp {
+
+        protected int Hp
+        {
             get => _hp;
             set
             {
                 _hp = value;
                 OnHpChanged?.Invoke(_hp, _maxHp);
             }
-            }
+        }
 
-        int atk;
+        int _atk;
 
-        public int Atk
+        protected int Atk
         {
-            get => (int)(atk * (_atkMultiplier / 100.0f));
-            private set => atk = value;
+            get => (int)(_atk * (_atkMultiplier / 100.0f));
+            private set => _atk = value;
         }
 
         int _atkMultiplier = 100;
+
         public int AtkMultiplier
         {
             get => _atkMultiplier;
@@ -58,6 +61,7 @@ namespace Enemy
         }
 
         int _healMultiplier = 100;
+
         public int HealMultiplier
         {
             get => _healMultiplier;
@@ -69,6 +73,7 @@ namespace Enemy
         }
 
         int _takeMultiplier = 100;
+
         public int TakeMultiplier
         {
             get => _takeMultiplier;
@@ -82,15 +87,15 @@ namespace Enemy
         void Awake()
         {
             _ui = GetComponentInChildren<EntityUI>();
-            
+
             if (data == null) return;
             Init(data);
-            }
+        }
 
         void Start()
         {
-            _ui.UpdateHP(Hp, _maxHp);
-            OnHpChanged += _ui.UpdateHP;
+            _ui.UpdateHp(Hp, _maxHp);
+            OnHpChanged += _ui.UpdateHp;
         }
 
         private void OnMouseDown()

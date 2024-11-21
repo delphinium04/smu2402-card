@@ -1,28 +1,51 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Map;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class Managers : MonoBehaviour
 {
     static Managers _sInstance;
-    static Managers Instance { get { Init(); return _sInstance; } }
 
+    static Managers Instance
+    {
+        get
+        {
+            if (_sInstance == null) Init();
+            return _sInstance;
+        }
+    }
+
+    readonly MapManager _map = new MapManager();
     readonly ResourceManager _resource = new ResourceManager();
     readonly BattleManager _battle = new BattleManager();
+    readonly GameManager _game = new GameManager();
+    
+    readonly BgImageManager _bgImage = new BgImageManager();
 
     public static ResourceManager Resource => Instance._resource;
     public static BattleManager Battle => Instance._battle;
-    public static UIManager UI => UIManager.Instance;
-    public static PlayerController Player => PlayerController.Instance;
+    public static GameManager Game => Instance._game;
+    public static MapManager Map => Instance._map;
+
+    public static BgImageManager Background => Instance._bgImage;
 
     void Start()
     {
         Init();
+
+        Game.Start();
+    }
+
+    void Update()
+    {
+        Game.Update();
     }
 
     static void Init()
     {
-        if (_sInstance != null) return;
         GameObject go = GameObject.Find("@Managers");
         if (go == null)
         {
@@ -36,6 +59,6 @@ public class Managers : MonoBehaviour
 
     public static void RunCoroutine(IEnumerator coroutine)
     {
-        Instance.StartCoroutine(coroutine);
+        _sInstance?.StartCoroutine(coroutine);
     }
 }
