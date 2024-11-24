@@ -19,6 +19,7 @@ public class BattleUI : UIBase
 
     enum Texts
     {
+        MapText,
         DebugText
     }
 
@@ -48,13 +49,18 @@ public class BattleUI : UIBase
                 GetText(Texts.DebugText).text = "Enemy Turn";
                 break;
             case BattleManager.State.WaitForCard:
-                GetText(Texts.DebugText).text = "Waiting Card";
+                GetText(Texts.DebugText).text = "카드를 골라주세요";
                 break;
             case BattleManager.State.WaitForTarget:
-                GetText(Texts.DebugText).text = "Waiting Target";
+                GetText(Texts.DebugText).text = "타겟을 골라주세요";
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(state), state, null);
         }
+    }
+    
+    public void SetTitle(string t)
+    {
+        GetText(Texts.MapText).text = t;
     }
 }

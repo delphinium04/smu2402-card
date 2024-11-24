@@ -11,14 +11,20 @@ namespace EffectAsset
     {
         protected override void Apply()
         {
-            if(GetComponent(Target.gameObject, out BaseEnemy entity))
+            if (Target.TryGetComponent(out BaseEnemy entity))
                 entity.AtkMultiplier -= 25;
+            else PlayerController.Instance.AtkMultiplier -= 25;
         }
 
         public sealed override void Remove()
-        {           
-            if(GetComponent(Target.gameObject, out BaseEnemy entity))
+        {
+            if (Target.TryGetComponent(out BaseEnemy entity))
                 entity.AtkMultiplier += 25;
+            else
+                PlayerController.Instance.AtkMultiplier -= 25;
         }
+
+        public override BaseEffect Clone()
+            => ScriptableObject.CreateInstance<EffectWeakness>();
     }
 }

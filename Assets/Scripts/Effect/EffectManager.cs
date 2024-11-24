@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.VisualScripting;
 
 namespace Effect
 {
@@ -14,8 +13,11 @@ namespace Effect
     /// </summary>
     public class EffectManager : MonoBehaviour
     {
-        private const int DebuffStartIndexInType = 3; // from BaseEffect.Type
-        private readonly List<BaseEffect> _effects = new List<BaseEffect>();
+        private const int _debuffStartIndexInType = 3; // from BaseEffect.Type
+        public List<BaseEffect> _effects = new List<BaseEffect>();
+
+        public Action<BaseEffect> OnEffectAdded = null;
+        public Action<BaseEffect> OnEffectRemoved = null;
 
         // For Accessory
         public bool HasCross;
@@ -45,22 +47,33 @@ namespace Effect
 
         public void AddEffect(BaseEffect effect, int turn)
         {
-            _effects.Add(effect);
-            effect.Init(gameObject, turn);
+            if (FindEffect(effect) != null) return;
+
+            OnEffectAdded?.Invoke(effect);
+            BaseEffect e = effect.Clone();
+            _effects.Add(e);
+            e.Init(gameObject, turn+1);
         }
 
         public void RemoveEffect(BaseEffect effect)
         {
-            if (_effects.Contains(effect))
-            {
-                _effects.Remove(effect);
-                effect.Remove();
-            }
-            else Debug.LogError("EffectManager: no effect in list");
+            BaseEffect e = FindEffect(effect);
+            if (e == null) return;
+
+            OnEffectRemoved?.Invoke(e);
+            _effects.Remove(e);
+            e.Remove();
         }
 
         private void OnTurnPassed()
-            => _effects.ForEach(e => e.OnTurnPassed());
+        {
+            var list = _effects.ToArray();
+            foreach (var effect in list)
+            {
+                if (effect != null)
+                    effect.OnTurnPassed();
+            }
+        }
 
         /// <summary>
         /// 효과의 턴을 관리합니다
@@ -73,11 +86,13 @@ namespace Effect
         {
             if (kind == Kind.Buff && HasCross)
                 turn += 1;
-            
-            if (target != null && _effects.Contains(target))
+
+            if (target != null)
             {
-                if (isIgnored) target.AddIgnoreTurn(turn);
-                else target.AddTurn(turn);
+                BaseEffect e = FindEffect(target);
+                if (e == null) return;
+                if (isIgnored) e.AddIgnoreTurn(turn);
+                else e.AddTurn(turn);
                 return;
             }
 
@@ -111,7 +126,17 @@ namespace Effect
             }
         }
 
+        private BaseEffect FindEffect(BaseEffect effect)
+        {
+            foreach (var item in _effects)
+            {
+                if (item.Type == effect.Type) return item;
+            }
+
+            return null;
+        }
+
         private static bool IsBuff(BaseEffect e)
-            => (int)e.Type >= DebuffStartIndexInType;
+            => (int)e.Type >= _debuffStartIndexInType;
     }
 }

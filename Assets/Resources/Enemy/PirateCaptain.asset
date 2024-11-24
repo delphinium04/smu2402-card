@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: "\uD574\uC801 \uC120\uC7A5"
   _hp: 100
   _atk: 10
-  _sprite: {fileID: -2413806693520163455, guid: 60332ef66d6eed546a62c9cf97d72412, type: 3}
+  _sprite: {fileID: 21300000, guid: 87c102889e706bb40a1757a52294df60, type: 3}
   _description: 2 atk, 25% fatige/silence/root one, 2turn one debuff no
   _weight: 4
+  _type: 4

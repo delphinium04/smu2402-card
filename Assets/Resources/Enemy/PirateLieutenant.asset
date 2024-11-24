@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: "\uD574\uC801 \uBD80\uC120\uC7A5"
   _hp: 90
   _atk: 15
-  _sprite: {fileID: -2413806693520163455, guid: 60332ef66d6eed546a62c9cf97d72412, type: 3}
+  _sprite: {fileID: 21300000, guid: 3b389443c4afbbe4b87916a9bd007cb7, type: 3}
   _description: 1 atk, 50% fatigue, hp<=30 then heal 30 once
   _weight: 4
+  _type: 4

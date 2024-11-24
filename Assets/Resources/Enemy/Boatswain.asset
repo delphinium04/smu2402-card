@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: "\uAC11\uD310\uC7A5"
   _hp: 60
   _atk: 8
-  _sprite: {fileID: -2413806693520163455, guid: 60332ef66d6eed546a62c9cf97d72412, type: 3}
+  _sprite: {fileID: 21300000, guid: e1fd55f389ab9d7419ab8adcca852ab7, type: 3}
   _description: atk 2 times, hp <= 30 then one cleaner
   _weight: 4
+  _type: 0

@@ -10,17 +10,23 @@ namespace EffectAsset
     {
         protected override void Apply()
         {
-            if (GetComponent(Target.gameObject, out BaseEnemy entity))
+            if (Target.TryGetComponent(out BaseEnemy entity))
                 entity.TakeMultiplier += 50;
+            else
+                PlayerController.Instance.TakeMultiplier += 50;
         }
 
         public sealed override void Remove()
         {
             if (TurnIgnored > 0) return; // 이미 Remove() 되어있는 상황
-            
+
             if (Target.TryGetComponent(out BaseEnemy entity))
                 entity.TakeMultiplier -= 50;
-            else Debug.LogError($"{GetType().Name}: No AbstractEntity in {Target.name}");
+            else
+                PlayerController.Instance.TakeMultiplier -= 50;
         }
+
+        public override BaseEffect Clone()
+            => ScriptableObject.CreateInstance<EffectFatigue>();
     }
 }

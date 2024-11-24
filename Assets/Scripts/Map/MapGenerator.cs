@@ -24,6 +24,8 @@ public class MapGenerator
     public List<Stage>[] VisualizeMap(int lineCount, int stageCount, int lineMargin, int stageMargin,
         Vector3 startPosition, out Stage startStage, out Stage endStage)
     {
+        Debug.Log("generate start");
+
         if (!_normalPrefab) _normalPrefab = Managers.Resource.Load<GameObject>("Prefabs/MapNode/Normal");
         if (!_eventPrefab) _eventPrefab = Managers.Resource.Load<GameObject>("Prefabs/MapNode/Event");
         if (!_battlePrefab) _battlePrefab = Managers.Resource.Load<GameObject>("Prefabs/MapNode/Battle");

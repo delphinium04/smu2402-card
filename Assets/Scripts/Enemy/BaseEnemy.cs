@@ -1,4 +1,5 @@
 ﻿using System;
+using Effect;
 using UnityEngine;
 
 namespace Enemy
@@ -15,15 +16,16 @@ namespace Enemy
         WatchfulSallor
     }
 
-    [RequireComponent(typeof(SpriteRenderer))]
+    [RequireComponent(typeof(SpriteRenderer), typeof(EffectManager))]
     public class BaseEnemy : MonoBehaviour
     {
-        public Action<int, int> OnHpChanged = null;
-
         protected EnemyData data;
 
-        Sprite image;
-        EntityUI _ui;
+        public Action<int, int> OnHpChanged = null;
+        public Action<BaseEnemy> OnDeath = null;
+        public Action<BaseEnemy> OnClicked = null;
+
+        public int Weight { get; set; }
 
         public string Name { get; set; }
 
@@ -39,6 +41,7 @@ namespace Enemy
                 OnHpChanged?.Invoke(_hp, _maxHp);
             }
         }
+
 
         int _atk;
 
@@ -56,7 +59,7 @@ namespace Enemy
             set
             {
                 _atkMultiplier = value;
-                Debug.Log("플레이어의 공격 효과 계수가 " + _atkMultiplier + "%로 설정되었습니다.");
+                Debug.Log($"{Name}의 공격 효과 계수 => " + AtkMultiplier + "%");
             }
         }
 
@@ -68,7 +71,7 @@ namespace Enemy
             set
             {
                 _healMultiplier = value;
-                Debug.Log("플레이어의 공격 효과 계수가 " + _healMultiplier + "%로 설정되었습니다.");
+                Debug.Log($"{Name}의 회복 효과 계수 => " + HealMultiplier + "%");
             }
         }
 
@@ -80,22 +83,20 @@ namespace Enemy
             set
             {
                 _takeMultiplier = value;
-                Debug.Log("플레이어의 공격 효과 계수가 " + _takeMultiplier + "%로 설정되었습니다.");
+                Debug.Log($"{Name}의 받는 피해 계수 => " + TakeMultiplier + "%");
             }
         }
 
         void Awake()
         {
-            _ui = GetComponentInChildren<EntityUI>();
-
             if (data == null) return;
             Init(data);
         }
 
         void Start()
         {
-            _ui.UpdateHp(Hp, _maxHp);
-            OnHpChanged += _ui.UpdateHp;
+            OnHpChanged?.Invoke(_hp, _maxHp);
+
         }
 
         private void OnMouseDown()
@@ -109,10 +110,10 @@ namespace Enemy
             Hp = _data.Hp;
             _maxHp = _data.Hp;
             Atk = _data.Atk;
-            image = _data.Sprite;
             Name = _data.Name;
 
-            GetComponent<SpriteRenderer>().sprite = image;
+            GetComponent<SpriteRenderer>().sprite = _data.Sprite;
+            OnHpChanged?.Invoke(Hp, _maxHp);
         }
 
         public void TakeDamage(int damage)
@@ -131,11 +132,6 @@ namespace Enemy
             Debug.Log($"{data.Name}: 체력 {value} 회복");
         }
 
-        public Action<BaseEnemy> OnDeath;
-
-        public Action<BaseEnemy> OnClicked;
-
-        public int Weight { get; set; }
 
         public virtual void ActivatePattern()
         {

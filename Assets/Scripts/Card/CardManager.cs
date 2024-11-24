@@ -22,6 +22,7 @@ namespace Card
                 Destroy(gameObject);
                 return;
             }
+
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
@@ -30,13 +31,11 @@ namespace Card
             {
                 _cardPrefab = Resources.Load<GameObject>("Prefabs/Card");
             }
-            
-            // TEST
-            _cardDeck.AddCard(TestCardList.ToArray());
-            _cardDeck.AddCard(TestCardList.ToArray());
-            _cardDeck.AddCard(TestCardList.ToArray());
-            _cardDeck.AddCard(TestCardList.ToArray());
-            _cardDeck.AddCard(TestCardList.ToArray());
+        }
+
+        void Start()
+        {
+            _cardDeck.Reset();
         }
 
         /// <summary>
@@ -97,7 +96,7 @@ namespace Card
             return upgradedCards.Count >= 2;
             // else -> Sort + classify by Card
         }
-        
+
         public bool IsEmpty => _cardDeck.IsEmpty();
 
         private CardBehaviour CreateCardInstance(BaseCard c)
@@ -116,10 +115,26 @@ namespace Card
         {
             private readonly List<BaseCard> _cards = new List<BaseCard>();
 
+            private List<BaseCard> _allCards;
+
             public int GetRemainCardCount() => _cards.Count;
 
             public bool IsEmpty() => _cards.Count == 0;
-            
+
+            public void Reset()
+            {
+                // default set
+                _allCards = new List<BaseCard>();
+                _allCards.AddRange(Resources.LoadAll<BaseCard>("Card/Normal"));
+                _cards.AddRange(_allCards);
+                _cards.AddRange(_allCards);
+
+                _allCards.AddRange(Resources.LoadAll<BaseCard>("Card/Skill"));
+                _allCards.AddRange(Resources.LoadAll<BaseCard>("Card/Special"));
+                
+                _cards.AddRange(_allCards);
+            }
+
             public BaseCard GetRandomCard()
             {
                 if (_cards.Count == 0)

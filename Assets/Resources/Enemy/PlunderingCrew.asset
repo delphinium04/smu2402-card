@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: "\uB9DD\uBCF4\uAE30 \uC120\uC6D0"
   _hp: 25
   _atk: 5
-  _sprite: {fileID: -2413806693520163455, guid: 60332ef66d6eed546a62c9cf97d72412, type: 3}
+  _sprite: {fileID: 21300000, guid: f2775ddd13d7d2946bcf5955f88501a8, type: 3}
   _description: atk 2
   _weight: 2
+  _type: 5

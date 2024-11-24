@@ -30,6 +30,7 @@ public class MapManager
 
         _startStage.transform.SetParent(_stageRoot);
         _startStage.OnStageClicked += OnStageClicked;
+
         _endStage.transform.SetParent(_stageRoot);
         _endStage.OnStageClicked += OnStageClicked;
 
@@ -58,26 +59,27 @@ public class MapManager
         if (stage == _startStage)
         {
             _startStage.Deactivate();
-            return;
         }
 
-        if (stage == _endStage)
+        else if (stage == _endStage)
         {
             _endStage.Deactivate();
-            // Do something
-            return;
+            Managers.Battle.IsFinalBattle = true;
         }
 
-        foreach (var t in _stages)
+        else
         {
-            int idx = t.FindIndex(s => s == stage);
-            if (idx == -1) continue;
-            foreach (var stages in _stages)
+            foreach (var t in _stages)
             {
-                stages[idx].Deactivate();
-            }
+                int idx = t.FindIndex(s => s == stage);
+                if (idx == -1) continue;
+                foreach (var stages in _stages)
+                {
+                    stages[idx].Deactivate();
+                }
 
-            break;
+                break;
+            }
         }
 
         switch (stage.type)

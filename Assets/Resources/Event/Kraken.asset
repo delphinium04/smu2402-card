@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Kraken
   m_EditorClassIdentifier: 
   storyEventName: "\uD06C\uB77C\uCF04 \uC870\uC6B0 "
-  storyDescription: desc
-  storyAcceptPreview: acc prev
-  storyDenyPreview: deny prev
-  storyAcceptDescription: 'accept desc '
-  storyDenyDescription: deny desc
+  storyDescription: "\uD06C\uB77C\uCF04 \uC870\uC6B0 \uB0B4\uC6A9 "
+  storyAcceptPreview: "\uD06C\uB77C\uCF04 \uD5C8\uAC00 "
+  storyDenyPreview: "\uD06C\uB77C\uCF04 \uAC70\uC808 "
+  storyAcceptDescription: "\uD06C\uB77C\uCF04 \uD5C8\uAC00 \uB0B4\uC6A9 "
+  storyDenyDescription: "\uD06C\uB77C\uCF04 \uAC70\uC808 \uB0B4\uC6A9 "

@@ -1,15 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Enemy;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 using UnityEngine.SceneManagement;
 using Story;
 using UI;
+
 public class GameManager
 {
     readonly List<StoryEventData> _eventDatas = new();
-    List<StoryEventData> _battleData = new();
+    List<EnemyData> _enemyDatas = new();
+    public bool _alreadyGenerated = false;
+
 
     GameObject _eventUIPrefab;
 
@@ -21,10 +25,17 @@ public class GameManager
         _eventUIPrefab.SetActive(false);
 
         LoadAllEventData();
-        // LoadAllBattleData();
+        LoadAllEnemyData();
 
         // DEBUG
-        Managers.Map.GenerateMap();
+        // Managers.Battle.StartBattle("3-1");
+        Debug.Log("MapCreateStart");
+
+        if(!_alreadyGenerated)
+        {
+            Managers.Map.GenerateMap();
+            _alreadyGenerated = true;
+        }
     }
 
     public void Update()
@@ -51,8 +62,17 @@ public class GameManager
         _eventDatas.AddRange(events);
     }
 
+    void LoadAllEnemyData()
+    {
+        var enemies = Resources.LoadAll<EnemyData>("Enemy");
+        _enemyDatas.AddRange(enemies);
+    }
+
     StoryEventData GetRandomEventData()
         => _eventDatas[Random.Range(0, _eventDatas.Count)];
+
+    EnemyData GetRandomEnemyData()
+        => _enemyDatas[Random.Range(0, _enemyDatas.Count)];
 
 
     // AI 사용 (씬 동기화 대기)
@@ -69,16 +89,19 @@ public class GameManager
 
         // 씬이 로드된 후 작업 수행
         Managers.Map.DisableStage();
-        Managers.Battle.StartBattle();
+        Managers.Battle.StartBattle("3-1", _enemyDatas[1], _enemyDatas[1]);
     }
 
     public void EndBattle()
-    {        Managers.Background.SetImage(BgImageManager.ImageType.Map);
-
+    {
+        Managers.Background.SetImage(BgImageManager.ImageType.Map);
         Managers.Map.EnableStage();
         SceneManager.UnloadSceneAsync("Battle");
+
+        if (Managers.Battle.IsFinalBattle)
+            SceneManager.LoadScene("GameWin");
     }
-    
+
     public void GameLose()
     {
         SceneManager.LoadScene("GameOver");

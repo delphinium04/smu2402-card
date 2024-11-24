@@ -94,12 +94,7 @@ namespace Effect
             TurnDuration += turn;
         }
         
-        protected static bool GetComponent<T>(GameObject gameObject, out T component)
-        {
-            if (!gameObject.TryGetComponent(out component))
-                return true;
-            Debug.LogError($"GameObject {gameObject.name} does not have {component.GetType().Name}");
-            return false;
-        }
+        // 깊은 복사를 위한 추상 메서드
+        public abstract BaseEffect Clone();
     }
 }

@@ -15,6 +15,7 @@ MonoBehaviour:
   _name: "\uC804\uD22C \uC120\uC6D0"
   _hp: 75
   _atk: 13
-  _sprite: {fileID: -2413806693520163455, guid: 60332ef66d6eed546a62c9cf97d72412, type: 3}
+  _sprite: {fileID: 21300000, guid: 98585e63b5138b44582dbef4cfefe16d, type: 3}
   _description: atk once, 3 times one root
   _weight: 3
+  _type: 2

@@ -53,9 +53,9 @@ namespace Map
                 lineRenderer.positionCount = 2;
                 lineRenderer.SetPosition(0, transform.position);
                 lineRenderer.SetPosition(1, t.transform.position);
-                lineRenderer.startWidth = 0.2f;
-                lineRenderer.endWidth = 0.2f;
-                lineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.cyan };
+                lineRenderer.startWidth = 0.05f;
+                lineRenderer.endWidth = 0.05f;
+                lineRenderer.material = new Material(Shader.Find("Sprites/Default")) { color = Color.black };
                 lineRenderer.sortingLayerName = "UI";
             }
         }
