@@ -1,6 +1,7 @@
 ﻿using System;
 using Effect;
 using UnityEngine;
+using DG.Tweening;
 
 namespace Enemy
 {
@@ -102,17 +103,20 @@ namespace Enemy
         private void OnMouseDown()
         {
             OnClicked?.Invoke(this);
+            
+            transform.localScale *= 1.1f;
+            transform.DOScale(Vector3.one, 0.2f).SetEase(Ease.OutQuad);
         }
 
-        public void Init(EnemyData _data)
+        public void Init(EnemyData data)
         {
-            data = _data;
-            Hp = _data.Hp;
-            _maxHp = _data.Hp;
-            Atk = _data.Atk;
-            Name = _data.Name;
+            this.data = data;
+            Hp = data.Hp;
+            _maxHp = data.Hp;
+            Atk = data.Atk;
+            Name = data.Name;
 
-            GetComponent<SpriteRenderer>().sprite = _data.Sprite;
+            GetComponent<SpriteRenderer>().sprite = data.Sprite;
             OnHpChanged?.Invoke(Hp, _maxHp);
         }
 
@@ -131,7 +135,6 @@ namespace Enemy
             Hp += value;
             Debug.Log($"{data.Name}: 체력 {value} 회복");
         }
-
 
         public virtual void ActivatePattern()
         {

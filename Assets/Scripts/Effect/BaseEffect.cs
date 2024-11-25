@@ -78,7 +78,7 @@ namespace Effect
             }
             
             if (TurnDuration == 0)
-                Target.GetComponent<EffectManager>()?.RemoveEffect(this);
+                Target?.GetComponent<EffectManager>()?.RemoveEffect(this);
         }
         
         // Remove effect temporarily during N turns

@@ -15,8 +15,27 @@ using Unity.VisualScripting;
 /// </summary>
 public class BattleManager
 {
+    const int DefaultCardDrawAmount = 5;
+    const int MaxCardsPerTurn = 3;
+    readonly Vector3 EnemyStartPos = Vector3.right * 2;
+    readonly Vector3 EnemyEndPos = Vector3.right * 7;
+    readonly Vector3 CardStartPos = new Vector3(-7, -3, 0);
+    readonly Vector3 CardEndPos = new Vector3(4, -3, 0);
+
     public BattleUI UI;
     public bool IsFinalBattle = false;
+
+    public Action OnTurnPassed = null;
+
+    State _currentState;
+    bool _isPlayerTurn = true;
+    bool _isBattleEnd = true;
+
+    List<CardBehaviour> _drewCards = new(); // 플레이어가 현재 턴에서 드로우한 카드
+    List<Tuple<CardBehaviour, BaseEnemy>> _preservedCardActions = new();
+
+    public List<BaseEnemy> Enemies = new();
+    BaseEnemy _selectedEnemy = null; // Use in coroutine
 
     public enum State
     {
@@ -25,62 +44,33 @@ public class BattleManager
         WaitForTarget
     }
 
-    State _currentState;
-
     State CurrentState
     {
         get => _currentState;
         set
         {
             _currentState = value;
-            UI.SetUI(value);
+            UpdateUIState(value);
         }
     }
 
-    public Action OnTurnPassed = null;
-
-    public int cardDrawAmount = 5;
-    int _maxCardsPerTurn = 3;
-
-    bool _isPlayerTurn = true;
-    bool _isBattleEnd = true;
-
-    Vector3 _enemyStartPosition = Vector3.right * 2;
-    Vector3 _enemyEndPosition = Vector3.right * 7;
-    Vector3 _cardStartPosition = new Vector3(-7, -3, 0);
-    Vector3 _cardEndPosition = new Vector3(4, -3, 0);
-
-
-    List<CardBehaviour> _drewCards; // 플레이어가 현재 턴에서 드로우한 카드
-    List<Tuple<CardBehaviour, BaseEnemy>> _preservedCardAct;
-
-    public List<BaseEnemy> enemyList;
-    BaseEnemy _clickedEnemy;
-
-    public BattleManager()
+    void UpdateUIState(State state)
     {
-        _drewCards = new List<CardBehaviour>();
-        _preservedCardAct = new List<Tuple<CardBehaviour, BaseEnemy>>();
-        enemyList = new List<BaseEnemy>();
-        _clickedEnemy = null;
+        UI.SetUI(state);
     }
 
     // 적 세팅 및 게임 시작
     public void StartBattle(string title, params EnemyData[] data)
     {
         UI = GameObject.Find("BattleUI").GetComponent<BattleUI>();
-        Vector3 right = Vector3.right * 0.5f;
-
         for (int i = 0; i < data.Length; i++)
         {
             BaseEnemy e = Managers.Resource.GetEnemy(data[i]);
             AddEnemy(e);
-            e.transform.position = Vector3.Lerp(_enemyStartPosition, _enemyEndPosition, i / (float)data.Length);
+            e.transform.position = Vector3.Lerp(EnemyStartPos, EnemyEndPos, i / (float)data.Length);
         }
 
-
         UI.SetTitle(title);
-
         Managers.RunCoroutine(BattleRoutine());
     }
 
@@ -88,51 +78,34 @@ public class BattleManager
     {
         PlayerController.Instance.ResetSetting();
         PlayerController.Instance.BattleStart();
-
         _isPlayerTurn = true;
         _isBattleEnd = false;
+        _drewCards.Clear();
+        _preservedCardActions.Clear();
         CurrentState = State.Idle;
-
-        _drewCards = new List<CardBehaviour>();
-        _preservedCardAct = new List<Tuple<CardBehaviour, BaseEnemy>>();
-        UI.OnPassBtnClicked += OnTurnEndButtonClicked;
-        UI.OnCardConfirmBtnClicked += OnCardConfirmBtnClicked;
+        UI.OnPassBtnClicked += OnTurnEndClicked;
+        UI.OnCardConfirmBtnClicked += OnCardConfirmClicked;
     }
 
     IEnumerator BattleRoutine()
     {
         ResetVariables();
         Debug.Log("Battle Started");
-
         while (!_isBattleEnd)
         {
-            PlayerAct();
-            // 턴 종료 전까지 대기
+            PlayerAction();
             while (_isPlayerTurn) yield return null;
-            CheckIsBattleEnd();
-
-            EnemyAct();
-            CheckIsBattleEnd();
+            CheckBattleEnd();
+            EnemyAction();
+            CheckBattleEnd();
             yield return null;
-
             OnTurnPassed?.Invoke();
         }
 
-        PlayerController.Instance.BattleEnd();
-        // win
-        if (enemyList.Count == 0)
-        {
-            Debug.Log("게임 승리");
-            Managers.Game.EndBattle();
-        }
-        else
-        {
-            Debug.Log("게임 패배");
-            Managers.Game.GameLose();
-        }
+        EndBattle();
     }
 
-    private void CheckIsBattleEnd()
+    private void CheckBattleEnd()
     {
         if (PlayerController.Instance.Hp <= 0)
         {
@@ -141,17 +114,14 @@ public class BattleManager
             else
                 _isBattleEnd = true;
         }
-
-        if (enemyList.Count == 0 || CardManager.Instance.IsEmpty)
+        else if (Enemies.Count == 0 || CardManager.Instance.IsEmpty)
             _isBattleEnd = true;
     }
 
-    // 플레이어 행동 시작
-    private void PlayerAct()
+    private void PlayerAction()
     {
-        Debug.Log("플레이어 턴");
         _isPlayerTurn = true;
-        _drewCards.AddRange(CardManager.Instance.DrawCard(cardDrawAmount));
+        _drewCards.AddRange(CardManager.Instance.DrawCard(DefaultCardDrawAmount));
         if (_drewCards.Count <= 0)
         {
             Debug.LogError("No Card in drew cards");
@@ -160,12 +130,9 @@ public class BattleManager
 
         for (int i = 0; i < _drewCards.Count; i++)
         {
-            // Action 등록
             _drewCards[i].OnCardClicked += OnCardClicked;
-
-            // x좌표 -7 ~ 4 나열
             _drewCards[i].transform.position =
-                Vector3.Lerp(_cardStartPosition, _cardEndPosition, (i / (float)_drewCards.Count));
+                Vector3.Lerp(CardStartPos, CardEndPos, (i / (float)_drewCards.Count));
             _drewCards[i].GetComponent<SpriteRenderer>().sortingOrder = 100 + i;
         }
 
@@ -173,27 +140,19 @@ public class BattleManager
         UI.SetUI(State.WaitForCard);
     }
 
-    // 플레이어 행동 끝
-    private void PlayerActEnd()
+    private void PlayerActionEnd()
     {
         _isPlayerTurn = false;
-
         // preservedCardAct에 없는 카드만 다시 복귀
-        CardManager.Instance.AddCardToDeck(
-            _drewCards.Where(
-                card => _preservedCardAct.All(
-                    x => x.Item1 != card)).ToArray());
-
-        _drewCards.ForEach(e => Managers.Resource.Destroy(e.gameObject));
+        var cardsToReturnToDeck =
+            _drewCards.Where(card => _preservedCardActions.All(pair => pair.Item1 != card)).ToArray();
+        CardManager.Instance.AddCardToDeck(cardsToReturnToDeck);
+        _drewCards.ForEach(card => Managers.Resource.Destroy(card.gameObject));
         _drewCards.Clear();
-        _preservedCardAct.Clear();
-
-        CheckIsBattleEnd();
+        _preservedCardActions.Clear();
     }
 
-
-    // 카드 클릭 시 Action<CardBehaviour>를 통해 Invoke됨    
-    private void OnCardClicked(CardBehaviour c)
+    private void OnCardClicked(CardBehaviour card)
     {
         if (!_isPlayerTurn || CurrentState != State.WaitForCard)
         {
@@ -201,95 +160,93 @@ public class BattleManager
             return;
         }
 
-        // 이미 선택한 경우
-        Tuple<CardBehaviour, BaseEnemy> cardTargetTuple;
-        if ((cardTargetTuple = _preservedCardAct.Find(x => x.Item1 == c)) != null)
+        var cardTargetTuple = _preservedCardActions.Find(tuple => tuple.Item1 == card);
+        if (cardTargetTuple != null)
         {
-            Debug.Log("카드 취소됨");
-            _preservedCardAct.Remove(cardTargetTuple);
+            card.UnselectCard(); // Animation
+            _preservedCardActions.Remove(cardTargetTuple);
         }
-        else if (_preservedCardAct.Count < _maxCardsPerTurn)
+        else if (_preservedCardActions.Count < MaxCardsPerTurn)
         {
-            Debug.Log("카드 선택됨");
-            _clickedEnemy = null;
-
-            if (c.Data.TargetingType == TargetingType.Single)
-            {
-                CurrentState = State.WaitForTarget;
-                Managers.RunCoroutine(WaitForEnemySelection(c));
-            }
+            card.SelectCard(); // Animation
+            _selectedEnemy = null;
+            if (card.Data.TargetingType == TargetingType.Single)
+                Managers.RunCoroutine(WaitForEnemySelection(card));
             else
-            {
-                cardTargetTuple = new Tuple<CardBehaviour, BaseEnemy>(c, _clickedEnemy);
-                _preservedCardAct.Add(cardTargetTuple);
-            }
+                _preservedCardActions.Add(new Tuple<CardBehaviour, BaseEnemy>(card, _selectedEnemy));
         }
         else
             Debug.LogWarning("카드 선택 한계 도달");
     }
 
-    private IEnumerator WaitForEnemySelection(CardBehaviour c)
+    private IEnumerator WaitForEnemySelection(CardBehaviour card)
     {
-        Debug.Log("단일 타겟 카드가 선택되었습니다. 적을 선택하세요.");
         CurrentState = State.WaitForTarget;
         UI.SetUI(State.WaitForTarget);
-        // 적 클릭 대기
-        while (_clickedEnemy is null) yield return null;
-        _preservedCardAct.Add(new Tuple<CardBehaviour, BaseEnemy>(c, _clickedEnemy));
+        
+        while (_selectedEnemy is null) yield return null;
+        _preservedCardActions.Add(new Tuple<CardBehaviour, BaseEnemy>(card, _selectedEnemy));
         CurrentState = State.WaitForCard;
-        UI.SetUI(State.WaitForTarget);
     }
 
-    void OnEnemyClicked(BaseEnemy e)
+    void OnEnemyClicked(BaseEnemy enemy)
     {
         if (CurrentState != State.WaitForTarget) return;
-        _clickedEnemy = e;
-        Debug.Log($"{_clickedEnemy.name} clicked");
+        _selectedEnemy = enemy;
     }
 
-    // 카드 선택 완료, 타깃 선택 + 카드 정리
-    private void OnCardConfirmBtnClicked()
+    private void OnCardConfirmClicked()
     {
         if (!_isPlayerTurn || CurrentState == State.WaitForTarget) return;
         CurrentState = State.Idle;
-        UI.SetUI(State.Idle);
 
-        Debug.Log("선택한 카드 사용");
-        Debug.Log(_preservedCardAct.Count);
-        _preservedCardAct.ForEach(tuple => { tuple.Item1.Use(tuple.Item2); });
-        PlayerActEnd();
+        _preservedCardActions.ForEach(tuple => { tuple.Item1.Use(tuple.Item2); });
+        PlayerActionEnd();
     }
 
-    public void AddEnemy(BaseEnemy e)
+    public void AddEnemy(BaseEnemy enemy)
     {
-        enemyList.Add(e);
-        e.OnClicked += OnEnemyClicked;
-        e.OnDeath += OnEnemyDie;
+        Enemies.Add(enemy);
+        enemy.OnClicked += OnEnemyClicked;
+        enemy.OnDeath += OnEnemyDie;
     }
 
     // 카드 실행 및 정리, 턴 종료
-    void OnTurnEndButtonClicked()
+    void OnTurnEndClicked()
     {
-        PlayerActEnd();
+        PlayerActionEnd();
     }
 
     // 적 사망 시 Action<BaseEnemy>를 통해 Invoke됨    
     void OnEnemyDie(BaseEnemy e)
     {
         // Give Item Or Card ...
-        enemyList.Remove(e);
+        Enemies.Remove(e);
         Managers.Resource.Destroy(e.gameObject);
     }
 
-    void EnemyAct()
+    void EnemyAction()
     {
-        Debug.Log("적의 턴");
-        enemyList.ToList().ForEach(e => e.ActivatePattern());
+        Enemies.ToList().ForEach(e => e.ActivatePattern());
+    }
+    
+    private void EndBattle()
+    {
+        PlayerController.Instance.BattleEnd();
+        if (Enemies.Count == 0)
+        {
+            Debug.Log("Victory");
+            UI.SetWinUI();
+        }
+        else
+        {
+            Debug.Log("Defeat");
+            Managers.Game.GameLose();
+        }
     }
 
-    void ChangeState(State state)
+    void OnEndButtonClicked()
     {
-        CurrentState = state;
-        UI.SetUI(state);
+        Managers.Game.EndBattle();
     }
 }

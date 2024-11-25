@@ -15,12 +15,6 @@ namespace CardAsset
 
         public override void Use(params BaseEnemy[] targets)
         {
-            if (targets.Length == 0)
-            {
-                Debug.LogError($"{CardName}: No target was assigned!");
-                return;
-            }
-
             PlayerController p = PlayerController.Instance;
             if (isUpgraded)
             {
