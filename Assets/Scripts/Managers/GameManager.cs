@@ -14,6 +14,7 @@ public class GameManager
     List<EnemyData> _enemyDatas = new();
     public bool _alreadyGenerated = false;
 
+    public float _dotweenDuration = 1f;
 
     GameObject _eventUIPrefab;
 
@@ -38,9 +39,6 @@ public class GameManager
         }
     }
 
-    public void Update()
-    {
-    }
 
     public void LoadEvent()
     {
@@ -75,9 +73,10 @@ public class GameManager
         => _enemyDatas[Random.Range(0, _enemyDatas.Count)];
 
 
-    // AI 사용 (씬 동기화 대기)
     private IEnumerator LoadBattleCoroutine()
     {
+        Object.FindObjectOfType<FadeManager>().SetFadeOut(_dotweenDuration);
+        
         // 씬 비동기 로딩
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("Battle", LoadSceneMode.Additive);
 
@@ -87,7 +86,7 @@ public class GameManager
             yield return null;
         }
 
-        // 씬이 로드된 후 작업 수행
+        Object.FindObjectOfType<FadeManager>().SetFadeIn(_dotweenDuration);
         Managers.Map.DisableStage();
         Managers.Battle.StartBattle("3-1", _enemyDatas[1], _enemyDatas[1]);
     }

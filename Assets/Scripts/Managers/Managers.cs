@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Map;
-using TMPro.EditorUtilities;
+﻿using System.Collections;
 using UnityEngine;
 
 public class Managers : MonoBehaviour
@@ -39,10 +35,6 @@ public class Managers : MonoBehaviour
         Game.Start();
     }
 
-    void Update()
-    {
-        Game.Update();
-    }
 
     static void Init()
     {
